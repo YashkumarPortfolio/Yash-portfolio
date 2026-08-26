@@ -3,360 +3,229 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yash Kumar — Video Editor</title>
+<title>Yash Kumar — Video Editor & Short-Form Specialist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg-a: #0c0b12;
-    --bg-b: #17131f;
-    --bg-c: #0a1018;
-    --line: rgba(255,255,255,0.1);
-    --text: #0010FF;
-    --text-dim: #a4a3ad;
-    --accent: #e8b04b;
-    --accent-2: #f4d78a;
-    --accent-cool: #6fa3c9;
-    --glass: rgba(255,255,255,0.055);
-    --glass-border: rgba(255,255,255,0.13);
-  }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{
-    color: var(--text);
-    font-family:'Inter',sans-serif; line-height:1.55;
-    -webkit-font-smoothing: antialiased;
-    position: relative;
-    overflow-x: hidden;
-    background:
-      radial-gradient(ellipse 900px 600px at 15% -5%, rgba(232,176,75,0.16), transparent 60%),
-      radial-gradient(ellipse 800px 700px at 90% 15%, rgba(111,163,201,0.14), transparent 60%),
-      radial-gradient(ellipse 700px 600px at 30% 75%, rgba(180,110,220,0.10), transparent 60%),
-      linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%);
-    background-attachment: fixed;
-  }
-  h1,h2,h3,.display{ font-family:'Fraunces',serif; font-weight:500; }
-  a{ color: inherit; }
-  ::selection{ background: var(--accent); color:#100c02; }
+:root {
+--bg-dark: #0a0a0c;
+--card-bg: #141419;
+--accent: #e8b04b;
+--text-main: #f4f2ec;
+--text-muted: #9e9ea7;
+--border: rgba(255, 255, 255, 0.08);
+}
 
-  body::after{
-    content:'';
-    position: fixed; inset:0; pointer-events:none; z-index: 200;
-    opacity: 0.035; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+• { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+background-color: var(--bg-dark);
+color: var(--text-main);
+font-family: 'Inter', sans-serif;
+line-height: 1.6;
+-webkit-font-smoothing: antialiased;
+}
 
-  .glow{
-    position: fixed; border-radius: 50%; filter: blur(100px); pointer-events:none; z-index:0;
-    transition: transform 0.2s linear;
-    will-change: transform;
-  }
-  .glow-1{ width: 560px; height: 560px; background: radial-gradient(circle, rgba(232,176,75,0.22), transparent 70%); top: -140px; right: -100px; }
-  .glow-2{ width: 480px; height: 480px; background: radial-gradient(circle, rgba(111,163,201,0.18), transparent 70%); bottom: 8%; left: -120px; }
-  .glow-3{ width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,110,220,0.14), transparent 70%); top: 45%; right: 10%; }
+/* Navigation */
+nav {
+position: sticky; top: 0; z-index: 100;
+display: flex; justify-space-between; align-items: center;
+padding: 18px 8%; background: rgba(10, 10, 12, 0.95);
+border-bottom: 1px solid var(--border);
+}
+nav .logo { font-weight: 700; font-size: 1.1rem; tracking: -0.02em; }
+nav .links a {
+color: var(--text-muted); text-decoration: none; margin-left: 24px;
+font-size: 0.9rem; transition: color 0.2s;
+}
+nav .links a:hover { color: var(--text-main); }
 
-  .reveal{ opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
-  .reveal.in{ opacity:1; transform:none; }
+/* Hero Section */
+.hero {
+padding: 100px 8% 80px; text-align: center; max-width: 900px; margin: 0 auto;
+}
+.hero .badge {
+display: inline-block; font-size: 0.8rem; font-weight: 600;
+text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent);
+background: rgba(232, 176, 75, 0.1); border: 1px solid rgba(232, 176, 75, 0.2);
+padding: 6px 14px; border-radius: 50px; margin-bottom: 20px;
+}
+.hero h1 { font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+.hero p { font-size: 1.15rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 32px; }
 
-  /* ---- solid nav, no glass ---- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 20px 6vw;
-    background: #0a090e;
-    border-bottom: 1px solid var(--line);
-  }
-  nav .logo{ font-family:'Fraunces',serif; font-size:1.05rem; letter-spacing:0.01em; }
-  nav .links{ display:flex; gap:26px; font-size:14px; color:var(--text-dim); }
-  nav .links a{ text-decoration:none; position:relative; transition: color .2s; white-space:nowrap; }
-  nav .links a:hover{ color: var(--text); }
+/* Buttons */
+.cta-group { display: flex; gap: 16px; justify-content: center; }
+.btn {
+padding: 12px 28px; border-radius: 50px; font-weight: 600; font-size: 0.95rem;
+text-decoration: none; transition: transform 0.2s, background-color 0.2s;
+}
+.btn-primary { background: var(--accent); color: #000; }
+.btn-primary:hover { transform: translateY(-2px); background: #f4d78a; }
+.btn-secondary { border: 1px solid var(--border); color: var(--text-main); background: var(--card-bg); }
+.btn-secondary:hover { border-color: var(--accent); transform: translateY(-2px); }
 
-  /* ---- hero ---- */
-  .hero{
-    min-height: 80vh; display:flex; flex-direction:column; justify-content:center;
-    padding: 70px 6vw 90px; position:relative; z-index:1;
-  }
-  .hero .eyebrow{
-    font-size:13px; letter-spacing:0.14em; text-transform:uppercase;
-    color: var(--accent); margin-bottom: 20px; font-weight: 600; line-height:1;
-  }
-  .hero h1{
-    font-size: clamp(2.8rem, 7vw, 5.4rem); line-height:1.02; letter-spacing:-0.015em;
-  }
-  .hero .tagline{
-    font-family:'Fraunces',serif; font-style: italic; font-weight: 400;
-    font-size: clamp(1.2rem, 2.2vw, 1.7rem); line-height: 1.35; color: var(--accent-2);
-    margin-top: 20px; max-width: 22ch;
-  }
-  .hero p.desc{
-    margin-top:26px; max-width:52ch; color:var(--text-dim); font-size:16px; line-height:1.65;
-  }
-  .hero .cta{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
+/* Work Section */
+section { padding: 80px 8%; max-width: 1200px; margin: 0 auto; }
+.section-header { margin-bottom: 40px; }
+.section-header h2 { font-size: 2rem; font-weight: 700; }
+.section-header p { color: var(--text-muted); font-size: 0.95rem; }
 
-  .btn{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 28px; border-radius:100px; font-size:15px; font-weight:500;
-    text-decoration:none; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
-  }
-  .btn-primary{ background: linear-gradient(135deg, var(--accent), #d99a35); color:#100c02; box-shadow: 0 6px 24px rgba(232,176,75,0.25); }
-  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(232,176,75,0.4); }
-  .btn-ghost{
-    border:1px solid var(--glass-border); color:var(--text);
-    background: var(--glass); backdrop-filter: blur(10px);
-  }
-  .btn-ghost:hover{ border-color: var(--accent); transform: translateY(-3px); }
+.video-grid {
+display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px;
+}
+.video-card {
+background: var(--card-bg); border: 1px solid var(--border);
+border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+}
+.video-wrapper {
+width: 100%; aspect-ratio: 9/16; background: #000; position: relative;
+}
+.video-wrapper video { width: 100%; height: 100%; object-fit: cover; }
+.video-info { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.video-info .tag { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; font-weight: 600; }
+.video-info h3 { font-size: 1.2rem; margin-bottom: 8px; }
+.video-info p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
 
-  section{ padding: 100px 6vw; max-width:1240px; margin:0 auto; position:relative; z-index:1; }
-  .section-label{
-    display:flex; align-items:center; gap:14px; margin-bottom:44px;
-    font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim);
-  }
-  .section-label span.num{ color: var(--accent); }
-  .section-label::after{ content:''; flex:1; height:1px; background:var(--line); }
-  section h2{ font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-bottom:16px; }
+/* Skills & Tools */
+.skills-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.skill-pill {
+background: var(--card-bg); border: 1px solid var(--border);
+padding: 8px 18px; border-radius: 50px; font-size: 0.9rem; color: var(--text-main);
+}
 
-  /* ---- alternating work rows ---- */
-  .work-list{ display:flex; flex-direction:column; gap: 90px; margin-top: 50px; }
-  .work-item{
-    display:flex; align-items:center; gap: 56px;
-  }
-  .work-item:nth-child(even){ flex-direction: row-reverse; }
-  .work-item .frame{
-    flex: 0 0 300px; width: 300px;
-    aspect-ratio: 9/16; max-height:480px; background:#000; border-radius: 18px; overflow:hidden;
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.25);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.4);
-  }
-  .work-item .frame video{ width:100%; height:100%; object-fit:cover; display:block; }
-  .work-item .text{ flex: 1 1 auto; min-width: 0; }
+/* Contact CTA */
+.contact-box {
+text-align: center; background: var(--card-bg); border: 1px solid var(--border);
+border-radius: 24px; padding: 60px 20px; margin-top: 40px;
+}
+.contact-box h2 { font-size: 2.2rem; margin-bottom: 12px; }
+.contact-box p { color: var(--text-muted); margin-bottom: 28px; }
+.contact-email {
+font-size: 1.3rem; font-weight: 600; color: var(--accent); text-decoration: none;
+border-bottom: 2px solid var(--accent); padding-bottom: 4px;
+}
 
-  .work-item .index{ font-family:'Fraunces',serif; font-style:italic; color: var(--accent); font-size: 1rem; margin-bottom: 14px; }
-  .work-item .tag{
-    display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
-    color: var(--accent); background: rgba(232,176,75,0.1); border:1px solid rgba(232,176,75,0.25);
-    padding: 6px 14px; border-radius: 100px; margin-bottom: 16px;
-  }
-  .work-item h3{ font-size: clamp(1.4rem, 2.6vw, 2rem); margin-bottom: 14px; }
-  .work-item p{ color: var(--text-dim); font-size: 16px; max-width: 46ch; }
+footer {
+text-align: center; padding: 40px 8%; color: var(--text-muted);
+font-size: 0.85rem; border-top: 1px solid var(--border);
+}
 
-  /* ---- toolkit ---- */
-  .toolkit-intro{ color: var(--text-dim); font-size: 17px; max-width: 60ch; margin-bottom: 40px; }
-  .pill-row{ display:flex; flex-wrap:wrap; gap:14px; }
-  .pill{
-    display:flex; align-items:center; gap:10px;
-    padding: 14px 22px; border-radius: 100px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.3);
-    backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 18px rgba(0,0,0,0.25);
-    font-size: 15px;
-    transition: transform .3s ease, border-color .3s ease;
-  }
-  .pill:hover{ transform: translateY(-3px); border-color: rgba(232,176,75,0.4); }
-  .pill .dot{ width:7px; height:7px; border-radius:50%; background: var(--accent); }
-
-  /* ---- about ---- */
-  .about{
-    display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center;
-  }
-  .about p{ color:var(--text-dim); font-size:17px; margin-bottom:16px; }
-  .about .big-quote{
-    font-family:'Fraunces',serif; font-size: clamp(1.6rem,2.6vw,2.1rem); line-height:1.35;
-  }
-  .about .big-quote em{ color:var(--accent); font-style:italic; }
-
-  /* ---- contact ---- */
-  .outro{ text-align:center; }
-  .outro-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.28);
-    border-radius: 28px;
-    padding: 70px 6vw;
-    backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.35);
-  }
-  .outro h2{ font-size: clamp(2.2rem,5vw,3.6rem); max-width:20ch; margin:0 auto 22px; }
-  .outro p{ color:var(--text-dim); margin-bottom:34px; }
-  .outro .email-link{
-    font-family:'Fraunces',serif; font-size: clamp(1.4rem,3vw,2rem);
-    border-bottom: 1px solid var(--accent); padding-bottom:4px; text-decoration:none;
-    transition: opacity .2s;
-  }
-  .outro .email-link:hover{ opacity:0.7; }
-
-  footer{
-    border-top:1px solid var(--line); padding:26px 6vw; display:flex;
-    justify-content:space-between; color:var(--text-dim); font-size:13px; flex-wrap:wrap; gap:8px;
-    position: relative; z-index: 1;
-  }
-
-  @media (max-width: 780px){
-    .about{ grid-template-columns:1fr; }
-    nav .links{ gap:16px; font-size:13px; }
-    .work-item{ flex-direction: column !important; gap: 26px; }
-    .work-item .frame{ max-height: 420px; margin: 0 auto; width: 100%; max-width: 320px; flex: none; }
-  }
-  @media (max-width: 480px){
-    nav .links{ display:none; }
-  }
+@media (max-width: 600px) {
+nav .links { display: none; }
+.hero { padding: 60px 5% 40px; }
+}
 </style>
 </head>
 <body>
 
-<div class="glow glow-1"></div>
-<div class="glow glow-2"></div>
-<div class="glow glow-3"></div>
-
 <nav>
-  <div class="logo">Yash Kumar</div>
-  <div class="links">
-    <a href="#work">Work</a>
-    <a href="#toolkit">Toolkit</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </div>
+<div class="logo">Yash Kumar</div>
+<div class="links">
+<a href="#work">Work</a>
+<a href="#about">About</a>
+<a href="#contact">Contact</a>
+</div>
 </nav>
 
-<section class="hero">
-  <div class="eyebrow">Video Editor</div>
-  <h1>Yash Kumar</h1>
-  <p class="tagline">Video that people actually finish watching.</p>
-  <p class="desc">I edit across short-form and long-form, using Adobe Creative Cloud and CapCut to shape footage into something worth someone's attention — clean cuts, motion graphics, and pacing that holds.</p>
-  <div class="cta">
-    <a href="#work" class="btn btn-primary">View my work</a>
-    <a href="#contact" class="btn btn-ghost">Get in touch</a>
-  </div>
-</section>
+<div class="hero">
+<span class="badge">Video Editor</span>
+<h1>Edits designed to retain viewer attention.</h1>
+<p>Specializing in short-form and long-form content with clean cuts, sharp pacing, and high-retention captions.</p>
+<div class="cta-group">
+<a href="#work" class="btn btn-primary">View Portfolio</a>
+<a href="mailto:yash.kumar.98052@gmail.com" class="btn btn-secondary">Get in Touch</a>
+</div>
+</div>
 
 <section id="work">
-  <div class="section-label"><span class="num">01</span> Selected work</div>
-  <h2>A few clips I'm proud of</h2>
+<div class="section-header">
+<h2>Selected Work</h2>
+<p>A sample of recent projects built for social platforms and brand growth.</p>
+</div>
 
-  <div class="work-list">
+<div class="video-grid">
 
-    <div class="work-item reveal">
-      <div class="frame">
-        <video src="videos/clip1.mp4" controls preload="metadata"></video>
-      </div>
-      <div class="text">
-        <div class="index">01</div>
-        <span class="tag">Motion Graphics</span>
-        <h3>Clip title goes here</h3>
-        <p>Kinetic typography and animated overlays built in After Effects, layered into a fast-cut short. Describe the brief, what you built, and the effect it had — this is your chance to show the thinking, not just the result.</p>
-      </div>
-    </div>
+<!-- Card 1 -->
+<div class="video-card">
+<div class="video-wrapper">
+<video src="videos/clip1.mp4" controls preload="metadata"></video>
+</div>
+<div class="video-info">
+<span class="tag">Pacing & Captions</span>
+<h3>High-Retention Short</h3>
+<p>Dynamic cuts paired with custom typography styling designed to keep watch time high.</p>
+</div>
+</div>
 
-    <div class="work-item reveal">
-      <div class="frame">
-        <video src="videos/clip2.mp4" controls preload="metadata"></video>
-      </div>
-      <div class="text">
-        <div class="index">02</div>
-        <span class="tag">Multilingual Edit</span>
-        <h3>Clip title goes here</h3>
-        <p>A German-language edit, working with foreign-language dialogue, timing, and captions. Note here what made this one different to cut, and what it shows about your range.</p>
-      </div>
-    </div>
+<!-- Card 2 -->
+<div class="video-card">
+<div class="video-wrapper">
+<video src="videos/clip2.mp4" controls preload="metadata"></video>
+</div>
+<div class="video-info">
+<span class="tag">Multilingual Edit</span>
+<h3>Dialogue & Translation</h3>
+<p>Precise caption synchronization and clean audio assembly for foreign-language content.</p>
+</div>
+</div>
 
-    <div class="work-item reveal">
-      <div class="frame">
-        <video src="videos/clip3.mp4" controls preload="metadata"></video>
-      </div>
-      <div class="text">
-        <div class="index">03</div>
-        <span class="tag">AI-Generated</span>
-        <h3>Clip title goes here</h3>
-        <p>An AI-generated video, produced and edited end to end. Explain which tools you used to generate and assemble it, and what you handled yourself versus what the AI produced.</p>
-      </div>
-    </div>
+<!-- Card 3 -->
+<div class="video-card">
+<div class="video-wrapper">
+<video src="videos/clip3.mp4" controls preload="metadata"></video>
+</div>
+<div class="video-info">
+<span class="tag">AI Integration</span>
+<h3>Digital Asset Creation</h3>
+<p>Combining AI video tools into a seamless final cut with custom sound design.</p>
+</div>
+</div>
 
-    <div class="work-item reveal">
-      <div class="frame">
-        <video src="videos/clip4.mp4" controls preload="metadata"></video>
-      </div>
-      <div class="text">
-        <div class="index">04</div>
-        <span class="tag">Brand &amp; Ad Work</span>
-        <h3>Clip title goes here</h3>
-        <p>A talking-head and product edit made for a brand ad. Name the brand if you can, describe the goal of the ad, and what your edit contributed to hitting it.</p>
-      </div>
-    </div>
+<!-- Card 4 -->
+<div class="video-card">
+<div class="video-wrapper">
+<video src="videos/clip4.mp4" controls preload="metadata"></video>
+</div>
+<div class="video-info">
+<span class="tag">Commercial / Ad</span>
+<h3>Brand Promo Edit</h3>
+<p>Product and talking-head editing focused on clear messaging and immediate hooks.</p>
+</div>
+</div>
 
-  </div>
-</section>
-
-<section id="toolkit">
-  <div class="section-label"><span class="num">02</span> Toolkit</div>
-  <h2>How I work</h2>
-  <p class="toolkit-intro">I work primarily in the Adobe Creative Cloud ecosystem, moving between apps depending on what a project needs, plus CapCut for fast-turnaround social edits.</p>
-  <div class="pill-row">
-    <div class="pill reveal"><span class="dot"></span> Premiere Pro</div>
-    <div class="pill reveal"><span class="dot"></span> After Effects</div>
-    <div class="pill reveal"><span class="dot"></span> Photoshop</div>
-    <div class="pill reveal"><span class="dot"></span> Illustrator</div>
-    <div class="pill reveal"><span class="dot"></span> CapCut</div>
-  </div>
+</div>
 </section>
 
 <section id="about">
-  <div class="section-label"><span class="num">03</span> About</div>
-  <div class="about">
-    <p class="big-quote reveal">I started editing about a year ago and taught myself motion graphics along the way — that's the part of the craft I care about <em>most</em>.</p>
-    <div class="reveal">
-      <p>I edit across formats, short-form social content and longer pieces alike, adapting pacing and style to whatever the project calls for. My focus is clean cuts and graphics that support the story instead of getting in the way of it.</p>
-      <p>I'm looking for editing role, and I'm ready to bring the same care to your project that went into every clip above.</p>
-    </div>
-  </div>
+<div class="section-header">
+<h2>Editing & Tools</h2>
+</div>
+<p style="color: var(--text-muted); max-width: 700px;">
+Over the past year, I have focused on mastering the fundamentals of video editing: hook structuring, audio balancing, and premium caption placement. I work across both long-form and short-form media to deliver clean visual assets.
+</p>
+<div class="skills-list">
+<div class="skill-pill">Adobe Premiere Pro</div>
+<div class="skill-pill">CapCut</div>
+<div class="skill-pill">Photoshop</div>
+<div class="skill-pill">Custom Subtitles & Captions</div>
+<div class="skill-pill">Audio Enhancement</div>
+</div>
 </section>
 
-<section id="contact" class="outro">
-  <div class="outro-card">
-    <div class="section-label" style="justify-content:center"><span class="num">04</span> Contact</div>
-    <h2 class="reveal">Have a project? </h2>
-    <h2 class="reveal">Let's cut it together. </h2>
-    <p class="reveal">Open to editing roles and short-form or long-form projects.</p>
-    <a href="mailto:yash.kumar.98052@gmail.com" class="email-link reveal">yash.kumar.98052@gmail.com</a>
-  </div>
+<section id="contact">
+<div class="contact-box">
+<h2>Ready to start your next video?</h2>
+<p>Currently open for freelance projects and retainer roles.</p>
+<a href="mailto:yash.kumar.98052@gmail.com" class="contact-email">yash.kumar.98052@gmail.com</a>
+</div>
 </section>
 
 <footer>
-  <span>© </span> Yash Kumar</span>
-  <span>Edited by hand, one cut at a time.</span>
+<p>© <span id="year"></span> Yash Kumar. Hosted via GitHub Pages.</p>
 </footer>
 
 <script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // tie the ambient glow to scroll position for a live, liquid feel
-  const glow1 = document.querySelector('.glow-1');
-  const glow2 = document.querySelector('.glow-2');
-  const glow3 = document.querySelector('.glow-3');
-  let ticking = false;
-  function updateGlow(){
-    const y = window.scrollY;
-    if(glow1) glow1.style.transform = `translate(${y * 0.06}px, ${y * 0.12}px) scale(${1 + y * 0.0002})`;
-    if(glow2) glow2.style.transform = `translate(${-y * 0.08}px, ${-y * 0.05}px) scale(${1 + y * 0.00015})`;
-    if(glow3) glow3.style.transform = `translate(${y * 0.05}px, ${-y * 0.1}px)`;
-    ticking = false;
-  }
-  window.addEventListener('scroll', () => {
-    if(!ticking){
-      window.requestAnimationFrame(updateGlow);
-      ticking = true;
-    }
-  });
-  updateGlow();
-
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if(e.isIntersecting){
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-      }
-    });
-  }, { threshold: 0.15 });
-
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
 </body>
