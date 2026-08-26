@@ -8,14 +8,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-a: #0c0b12;
-    --bg-b: #17131f;
-    --bg-c: #0a1018;
+    --bg-a: #090b10;
+    --bg-b: #0e1720;
+    --bg-c: #0a1512;
     --line: rgba(255,255,255,0.1);
     --text: #f4f2ec;
-    --text-dim: #a4a3ad;
-    --accent: #6fa3c9; /* Updated brand accent color */
-    --accent-2: #f4d78a;
+    --text-dim: #a1a6ac;
+    --accent: #2dd4bf;
+    --accent-2: #ff8a65;
+    --accent-cool: #2dd4bf;
     --glass: rgba(255,255,255,0.055);
     --glass-border: rgba(255,255,255,0.13);
   }
@@ -28,9 +29,9 @@
     position: relative;
     overflow-x: hidden;
     background:
-      radial-gradient(ellipse 900px 600px at 15% -5%, rgba(111,163,201,0.16), transparent 60%),
-      radial-gradient(ellipse 800px 700px at 90% 15%, rgba(232,176,75,0.14), transparent 60%),
-      radial-gradient(ellipse 700px 600px at 30% 75%, rgba(180,110,220,0.10), transparent 60%),
+      radial-gradient(ellipse 900px 600px at 15% -5%, rgba(45,212,191,0.16), transparent 60%),
+      radial-gradient(ellipse 800px 700px at 90% 15%, rgba(255,138,101,0.13), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 30% 75%, rgba(45,150,212,0.10), transparent 60%),
       linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%);
     background-attachment: fixed;
   }
@@ -50,14 +51,14 @@
     transition: transform 0.2s linear;
     will-change: transform;
   }
-  .glow-1{ width: 560px; height: 560px; background: radial-gradient(circle, rgba(111,163,201,0.22), transparent 70%); top: -140px; right: -100px; }
-  .glow-2{ width: 480px; height: 480px; background: radial-gradient(circle, rgba(232,176,75,0.18), transparent 70%); bottom: 8%; left: -120px; }
-  .glow-3{ width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,110,220,0.14), transparent 70%); top: 45%; right: 10%; }
+  .glow-1{ width: 560px; height: 560px; background: radial-gradient(circle, rgba(45,212,191,0.24), transparent 70%); top: -140px; right: -100px; }
+  .glow-2{ width: 480px; height: 480px; background: radial-gradient(circle, rgba(255,138,101,0.18), transparent 70%); bottom: 8%; left: -120px; }
+  .glow-3{ width: 400px; height: 400px; background: radial-gradient(circle, rgba(45,150,212,0.14), transparent 70%); top: 45%; right: 10%; }
 
   .reveal{ opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
   .reveal.in{ opacity:1; transform:none; }
 
-  /* Fixed Navigation: logo on left, links pushed to the right without overlapping */
+  /* ---- solid nav, no glass ---- */
   nav{
     position:sticky; top:0; z-index:50;
     display:flex; justify-content:space-between; align-items:center;
@@ -65,11 +66,12 @@
     background: #0a090e;
     border-bottom: 1px solid var(--line);
   }
-  nav .logo{ font-family:'Fraunces',serif; font-size:1.05rem; letter-spacing:0.01em; color: var(--accent); }
-  nav .links{ display:flex; gap:26px; font-size:14px; color:var(--text-dim); margin-left: auto; }
+  nav .logo{ font-family:'Fraunces',serif; font-size:1.05rem; letter-spacing:0.01em; }
+  nav .links{ display:flex; gap:26px; font-size:14px; color:var(--text-dim); }
   nav .links a{ text-decoration:none; position:relative; transition: color .2s; white-space:nowrap; }
   nav .links a:hover{ color: var(--text); }
 
+  /* ---- hero ---- */
   .hero{
     min-height: 80vh; display:flex; flex-direction:column; justify-content:center;
     padding: 70px 6vw 90px; position:relative; z-index:1;
@@ -80,7 +82,9 @@
   }
   .hero h1{
     font-size: clamp(2.8rem, 7vw, 5.4rem); line-height:1.02; letter-spacing:-0.015em;
-    color: var(--accent); /* Heading color changed */
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent-2) 45%, var(--accent) 90%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 28px rgba(45,212,191,0.25));
   }
   .hero .tagline{
     font-family:'Fraunces',serif; font-style: italic; font-weight: 400;
@@ -97,8 +101,8 @@
     padding:14px 28px; border-radius:100px; font-size:15px; font-weight:500;
     text-decoration:none; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
   }
-  .btn-primary{ background: linear-gradient(135deg, var(--accent), #4b82ab); color:#0c0b12; box-shadow: 0 6px 24px rgba(111,163,201,0.25); }
-  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(111,163,201,0.4); }
+  .btn-primary{ background: linear-gradient(135deg, var(--accent), #1fa596); color:#06110f; box-shadow: 0 6px 24px rgba(45,212,191,0.28); }
+  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(45,212,191,0.42); }
   .btn-ghost{
     border:1px solid var(--glass-border); color:var(--text);
     background: var(--glass); backdrop-filter: blur(10px);
@@ -106,48 +110,40 @@
   .btn-ghost:hover{ border-color: var(--accent); transform: translateY(-3px); }
 
   section{ padding: 100px 6vw; max-width:1240px; margin:0 auto; position:relative; z-index:1; }
-
-  /* Centered section title styling with side lines */
-  .center-label{
-    display:flex; align-items:center; justify-content:center; gap:20px;
-    margin-bottom:44px; font-size:14px; letter-spacing:0.12em; text-transform:uppercase;
-    color: var(--accent); font-weight:600; text-align:center;
+  .section-label{
+    display:flex; align-items:center; gap:14px; margin-bottom:44px;
+    font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim);
   }
-  .center-label::before, .center-label::after{
-    content:''; flex:1; height:1px; background:var(--line);
-  }
+  .section-label span.num{ color: var(--accent); }
+  .section-label::after{ content:''; flex:1; height:1px; background:var(--line); }
+  section h2{ font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-bottom:16px; }
 
-  /* Fixed Work Items Layout for uniform left-to-right alignment and proper spacing */
+  /* ---- alternating work rows ---- */
   .work-list{ display:flex; flex-direction:column; gap: 90px; margin-top: 50px; }
   .work-item{
-    display:flex; align-items:center; gap: 56px; flex-direction: row !important;
+    display:flex; align-items:flex-start; gap: 56px;
   }
+  .work-item:nth-child(even){ flex-direction: row-reverse; }
   .work-item .frame{
     flex: 0 0 300px; width: 300px;
     aspect-ratio: 9/16; max-height:480px; background:#000; border-radius: 18px; overflow:hidden;
     border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.25);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.4);
   }
-  .work-item .frame video{ width:100%; height:100%; object-fit:cover; display:block; }
-  .work-item .text{ flex: 1 1 auto; min-width: 0; padding-left: 20px; }
+  .work-item .frame video, .work-item .frame iframe{ width:100%; height:100%; object-fit:cover; display:block; border:0; }
+  .work-item .text{ flex: 1 1 auto; min-width: 0; }
 
-  /* Inline layout for index number and tag on the same line */
-  .work-meta{
-    display:flex; align-items:center; gap:14px; margin-bottom:14px;
-  }
+  .work-item .meta{ display:flex; align-items:center; gap: 12px; margin-bottom: 16px; }
   .work-item .index{ font-family:'Fraunces',serif; font-style:italic; color: var(--accent); font-size: 1rem; }
   .work-item .tag{
     display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
-    color: var(--accent); background: rgba(111,163,201,0.1); border:1px solid rgba(111,163,201,0.25);
+    color: var(--accent); background: rgba(45,212,191,0.1); border:1px solid rgba(45,212,191,0.25);
     padding: 6px 14px; border-radius: 100px;
   }
   .work-item h3{ font-size: clamp(1.4rem, 2.6vw, 2rem); margin-bottom: 14px; }
   .work-item p{ color: var(--text-dim); font-size: 16px; max-width: 46ch; }
 
-  /* Toolkit section heading styling */
-  .toolkit-title{
-    font-size: clamp(2.2rem, 4vw, 3.2rem); color: var(--accent); margin-bottom: 16px; font-weight:600;
-  }
+  /* ---- toolkit ---- */
   .toolkit-intro{ color: var(--text-dim); font-size: 17px; max-width: 60ch; margin-bottom: 40px; }
   .pill-row{ display:flex; flex-wrap:wrap; gap:14px; }
   .pill{
@@ -160,9 +156,10 @@
     font-size: 15px;
     transition: transform .3s ease, border-color .3s ease;
   }
-  .pill:hover{ transform: translateY(-3px); border-color: rgba(111,163,201,0.4); }
+  .pill:hover{ transform: translateY(-3px); border-color: rgba(45,212,191,0.4); }
   .pill .dot{ width:7px; height:7px; border-radius:50%; background: var(--accent); }
 
+  /* ---- about ---- */
   .about{
     display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center;
   }
@@ -172,6 +169,7 @@
   }
   .about .big-quote em{ color:var(--accent); font-style:italic; }
 
+  /* ---- contact ---- */
   .outro{ text-align:center; }
   .outro-card{
     background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
@@ -201,7 +199,6 @@
     nav .links{ gap:16px; font-size:13px; }
     .work-item{ flex-direction: column !important; gap: 26px; }
     .work-item .frame{ max-height: 420px; margin: 0 auto; width: 100%; max-width: 320px; flex: none; }
-    .work-item .text{ padding-left: 0; }
   }
   @media (max-width: 480px){
     nav .links{ display:none; }
@@ -236,20 +233,17 @@
 </section>
 
 <section id="work">
-  <div class="center-label">Selected work</div>
+  <div class="section-label"><span class="num">01</span> Selected work</div>
   <h2>A few clips I'm proud of</h2>
 
   <div class="work-list">
 
     <div class="work-item reveal">
       <div class="frame">
-        <video src="videos/clip1.mp4" controls preload="metadata"></video>
+        <iframe src="https://www.youtube.com/embed/-L-187kVcPU" title="Clip 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="text">
-        <div class="work-meta">
-          <div class="index">01</div>
-          <span class="tag">Motion Graphics</span>
-        </div>
+        <div class="meta"><span class="index">01</span><span class="tag">Motion Graphics</span></div>
         <h3>Clip title goes here</h3>
         <p>Kinetic typography and animated overlays built in After Effects, layered into a fast-cut short. Describe the brief, what you built, and the effect it had — this is your chance to show the thinking, not just the result.</p>
       </div>
@@ -257,13 +251,10 @@
 
     <div class="work-item reveal">
       <div class="frame">
-        <video src="videos/clip2.mp4" controls preload="metadata"></video>
+        <iframe src="https://www.youtube.com/embed/EDFiiSvzaFI" title="Clip 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="text">
-        <div class="work-meta">
-          <div class="index">02</div>
-          <span class="tag">Multilingual Edit</span>
-        </div>
+        <div class="meta"><span class="index">02</span><span class="tag">Multilingual Edit</span></div>
         <h3>Clip title goes here</h3>
         <p>A German-language edit, working with foreign-language dialogue, timing, and captions. Note here what made this one different to cut, and what it shows about your range.</p>
       </div>
@@ -271,13 +262,10 @@
 
     <div class="work-item reveal">
       <div class="frame">
-        <video src="videos/clip3.mp4" controls preload="metadata"></video>
+        <iframe src="https://www.youtube.com/embed/49CQc4ZgEnQ" title="Clip 3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="text">
-        <div class="work-meta">
-          <div class="index">03</div>
-          <span class="tag">AI-Generated</span>
-        </div>
+        <div class="meta"><span class="index">03</span><span class="tag">AI-Generated</span></div>
         <h3>Clip title goes here</h3>
         <p>An AI-generated video, produced and edited end to end. Explain which tools you used to generate and assemble it, and what you handled yourself versus what the AI produced.</p>
       </div>
@@ -285,13 +273,10 @@
 
     <div class="work-item reveal">
       <div class="frame">
-        <video src="videos/clip4.mp4" controls preload="metadata"></video>
+        <iframe src="https://www.youtube.com/embed/Mt0Kkc3c2TI" title="Clip 4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="text">
-        <div class="work-meta">
-          <div class="index">04</div>
-          <span class="tag">Brand &amp; Ad Work</span>
-        </div>
+        <div class="meta"><span class="index">04</span><span class="tag">Brand &amp; Ad Work</span></div>
         <h3>Clip title goes here</h3>
         <p>A talking-head and product edit made for a brand ad. Name the brand if you can, describe the goal of the ad, and what your edit contributed to hitting it.</p>
       </div>
@@ -301,8 +286,8 @@
 </section>
 
 <section id="toolkit">
-  <div class="center-label">Toolkit</div>
-  <h2 class="toolkit-title">How I work</h2>
+  <div class="section-label"><span class="num">02</span> Toolkit</div>
+  <h2>How I work</h2>
   <p class="toolkit-intro">I work primarily in the Adobe Creative Cloud ecosystem, moving between apps depending on what a project needs, plus CapCut for fast-turnaround social edits.</p>
   <div class="pill-row">
     <div class="pill reveal"><span class="dot"></span> Premiere Pro</div>
@@ -314,21 +299,21 @@
 </section>
 
 <section id="about">
-  <div class="center-label">About</div>
+  <div class="section-label"><span class="num">03</span> About</div>
   <div class="about">
     <p class="big-quote reveal">I started editing about a year ago and taught myself motion graphics along the way — that's the part of the craft I care about <em>most</em>.</p>
     <div class="reveal">
       <p>I edit across formats, short-form social content and longer pieces alike, adapting pacing and style to whatever the project calls for. My focus is clean cuts and graphics that support the story instead of getting in the way of it.</p>
-      <p>I'm looking for my first junior editing role, and I'm ready to bring the same care to your project that went into every clip above.</p>
+      <p>I'm looking for an editing role, and I'm ready to bring the same care to your project that went into every clip above.</p>
     </div>
   </div>
 </section>
 
 <section id="contact" class="outro">
   <div class="outro-card">
-    <div class="center-label">Contact</div>
-    <h2 class="reveal">Have a project? Let's cut it together.</h2>
-    <p class="reveal">Open to junior editing roles and short-form or long-form projects.</p>
+    <div class="section-label" style="justify-content:center"><span class="num">04</span> Contact</div>
+    <h2 class="reveal" style="background:linear-gradient(135deg, var(--accent-2), var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent;">Have a project?<br>Let's cut it together.</h2>
+    <p class="reveal">Open to editing roles, short-form and long-form projects.</p>
     <a href="mailto:yash.kumar.98052@gmail.com" class="email-link reveal">yash.kumar.98052@gmail.com</a>
   </div>
 </section>
@@ -341,6 +326,7 @@
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  // tie the ambient glow to scroll position for a live, liquid feel
   const glow1 = document.querySelector('.glow-1');
   const glow2 = document.querySelector('.glow-2');
   const glow3 = document.querySelector('.glow-3');
