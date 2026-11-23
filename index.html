@@ -1,362 +1,1786 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yash Kumar — Video Editor</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-a: #090b10;
-    --bg-b: #0e1720;
-    --bg-c: #0a1512;
-    --line: rgba(255,255,255,0.1);
-    --text: #f4f2ec;
-    --text-dim: #a1a6ac;
-    --accent: #2dd4bf;
-    --accent-2: #ff8a65;
-    --accent-cool: #2dd4bf;
-    --glass: rgba(255,255,255,0.055);
-    --glass-border: rgba(255,255,255,0.13);
-  }
-  *{ box-sizing:border-box; margin:0; padding:0; }
-  html{ scroll-behavior:smooth; }
-  body{
-    color: var(--text);
-    font-family:'Inter',sans-serif; line-height:1.55;
-    -webkit-font-smoothing: antialiased;
-    position: relative;
-    overflow-x: hidden;
-    background:
-      radial-gradient(ellipse 900px 600px at 15% -5%, rgba(45,212,191,0.16), transparent 60%),
-      radial-gradient(ellipse 800px 700px at 90% 15%, rgba(255,138,101,0.13), transparent 60%),
-      radial-gradient(ellipse 700px 600px at 30% 75%, rgba(45,150,212,0.10), transparent 60%),
-      linear-gradient(165deg, var(--bg-a) 0%, var(--bg-b) 45%, var(--bg-c) 100%);
-    background-attachment: fixed;
-  }
-  h1,h2,h3,.display{ font-family:'Fraunces',serif; font-weight:500; }
-  a{ color: inherit; }
-  ::selection{ background: var(--accent); color:#100c02; }
-
-  body::after{
-    content:'';
-    position: fixed; inset:0; pointer-events:none; z-index: 200;
-    opacity: 0.035; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .glow{
-    position: fixed; border-radius: 50%; filter: blur(100px); pointer-events:none; z-index:0;
-    transition: transform 0.2s linear;
-    will-change: transform;
-  }
-  .glow-1{ width: 560px; height: 560px; background: radial-gradient(circle, rgba(45,212,191,0.24), transparent 70%); top: -140px; right: -100px; }
-  .glow-2{ width: 480px; height: 480px; background: radial-gradient(circle, rgba(255,138,101,0.18), transparent 70%); bottom: 8%; left: -120px; }
-  .glow-3{ width: 400px; height: 400px; background: radial-gradient(circle, rgba(45,150,212,0.14), transparent 70%); top: 45%; right: 10%; }
-
-  .reveal{ opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
-  .reveal.in{ opacity:1; transform:none; }
-
-  /* ---- solid nav, no glass ---- */
-  nav{
-    position:sticky; top:0; z-index:50;
-    display:flex; justify-content:space-between; align-items:center;
-    padding: 20px 6vw;
-    background: #0a090e;
-    border-bottom: 1px solid var(--line);
-  }
-  nav .logo{ font-family:'Fraunces',serif; font-size:1.05rem; letter-spacing:0.01em; }
-  nav .links{ display:flex; gap:26px; font-size:14px; color:var(--text-dim); }
-  nav .links a{ text-decoration:none; position:relative; transition: color .2s; white-space:nowrap; }
-  nav .links a:hover{ color: var(--text); }
-
-  /* ---- hero ---- */
-  .hero{
-    min-height: 80vh; display:flex; flex-direction:column; justify-content:center;
-    padding: 70px 6vw 90px; position:relative; z-index:1;
-  }
-  .hero .eyebrow{
-    font-size:13px; letter-spacing:0.14em; text-transform:uppercase;
-    color: var(--accent); margin-bottom: 20px; font-weight: 600; line-height:1;
-  }
-  .hero h1{
-    font-size: clamp(2.8rem, 7vw, 5.4rem); line-height:1.02; letter-spacing:-0.015em;
-    background: linear-gradient(135deg, #ffffff 0%, var(--accent-2) 45%, var(--accent) 90%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 6px 28px rgba(45,212,191,0.25));
-  }
-  .hero .tagline{
-    font-family:'Fraunces',serif; font-style: italic; font-weight: 400;
-    font-size: clamp(1.2rem, 2.2vw, 1.7rem); line-height: 1.35; color: var(--accent-2);
-    margin-top: 20px; max-width: 22ch;
-  }
-  .hero p.desc{
-    margin-top:26px; max-width:52ch; color:var(--text-dim); font-size:16px; line-height:1.65;
-  }
-  .hero .cta{ margin-top:40px; display:flex; gap:16px; flex-wrap:wrap; }
-
-  .btn{
-    display:inline-flex; align-items:center; gap:8px;
-    padding:14px 28px; border-radius:100px; font-size:15px; font-weight:500;
-    text-decoration:none; transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
-  }
-  .btn-primary{ background: linear-gradient(135deg, var(--accent), #1fa596); color:#06110f; box-shadow: 0 6px 24px rgba(45,212,191,0.28); }
-  .btn-primary:hover{ transform: translateY(-3px); box-shadow: 0 10px 30px rgba(45,212,191,0.42); }
-  .btn-ghost{
-    border:1px solid var(--glass-border); color:var(--text);
-    background: var(--glass); backdrop-filter: blur(10px);
-  }
-  .btn-ghost:hover{ border-color: var(--accent); transform: translateY(-3px); }
-
-  section{ padding: 100px 6vw; max-width:1240px; margin:0 auto; position:relative; z-index:1; }
-  .section-label{
-    display:flex; align-items:center; gap:14px; margin-bottom:44px;
-    font-size:13px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-dim);
-  }
-  .section-label span.num{ color: var(--accent); }
-  .section-label::after{ content:''; flex:1; height:1px; background:var(--line); }
-  section h2{ font-size: clamp(1.8rem, 3.4vw, 2.6rem); margin-bottom:16px; }
-
-  /* ---- alternating work rows ---- */
-  .work-list{ display:flex; flex-direction:column; gap: 90px; margin-top: 50px; }
-  .work-item{
-    display:flex; align-items:flex-start; gap: 56px;
-  }
-  .work-item:nth-child(even){ flex-direction: row-reverse; }
-  .work-item .frame{
-    flex: 0 0 300px; width: 300px;
-    aspect-ratio: 9/16; max-height:480px; background:#000; border-radius: 18px; overflow:hidden;
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.25);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 20px 50px rgba(0,0,0,0.4);
-  }
-  .work-item .frame video, .work-item .frame iframe{ width:100%; height:100%; object-fit:cover; display:block; border:0; }
-  .work-item .text{ flex: 1 1 auto; min-width: 0; }
-
-  .work-item .meta{ display:flex; align-items:center; gap: 12px; margin-bottom: 16px; }
-  .work-item .index{ font-family:'Fraunces',serif; font-style:italic; color: var(--accent); font-size: 1rem; }
-  .work-item .tag{
-    display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:0.08em;
-    color: var(--accent); background: rgba(45,212,191,0.1); border:1px solid rgba(45,212,191,0.25);
-    padding: 6px 14px; border-radius: 100px;
-  }
-  .work-item h3{ font-size: clamp(1.4rem, 2.6vw, 2rem); margin-bottom: 14px; }
-  .work-item p{ color: var(--text-dim); font-size: 16px; max-width: 46ch; }
-
-  /* ---- toolkit ---- */
-  .toolkit-intro{ color: var(--text-dim); font-size: 17px; max-width: 60ch; margin-bottom: 40px; }
-  .pill-row{ display:flex; flex-wrap:wrap; gap:14px; }
-  .pill{
-    display:flex; align-items:center; gap:10px;
-    padding: 14px 22px; border-radius: 100px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.3);
-    backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 18px rgba(0,0,0,0.25);
-    font-size: 15px;
-    transition: transform .3s ease, border-color .3s ease;
-  }
-  .pill:hover{ transform: translateY(-3px); border-color: rgba(45,212,191,0.4); }
-  .pill .dot{ width:7px; height:7px; border-radius:50%; background: var(--accent); }
-
-  /* ---- about ---- */
-  .about{
-    display:grid; grid-template-columns: 1fr 1fr; gap:60px; align-items:center;
-  }
-  .about p{ color:var(--text-dim); font-size:17px; margin-bottom:16px; }
-  .about .big-quote{
-    font-family:'Fraunces',serif; font-size: clamp(1.6rem,2.6vw,2.1rem); line-height:1.35;
-  }
-  .about .big-quote em{ color:var(--accent); font-style:italic; }
-
-  /* ---- contact ---- */
-  .outro{ text-align:center; }
-  .outro-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
-    border:1px solid var(--glass-border); border-top-color: rgba(255,255,255,0.28);
-    border-radius: 28px;
-    padding: 70px 6vw;
-    backdrop-filter: blur(26px) saturate(160%); -webkit-backdrop-filter: blur(26px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 20px 60px rgba(0,0,0,0.35);
-  }
-  .outro h2{ font-size: clamp(2.2rem,5vw,3.6rem); max-width:20ch; margin:0 auto 22px; }
-  .outro p{ color:var(--text-dim); margin-bottom:34px; }
-  .outro .email-link{
-    font-family:'Fraunces',serif; font-size: clamp(1.4rem,3vw,2rem);
-    border-bottom: 1px solid var(--accent); padding-bottom:4px; text-decoration:none;
-    transition: opacity .2s;
-  }
-  .outro .email-link:hover{ opacity:0.7; }
-
-  footer{
-    border-top:1px solid var(--line); padding:26px 6vw; display:flex;
-    justify-content:space-between; color:var(--text-dim); font-size:13px; flex-wrap:wrap; gap:8px;
-    position: relative; z-index: 1;
-  }
-
-  @media (max-width: 780px){
-    .about{ grid-template-columns:1fr; }
-    nav .links{ gap:16px; font-size:13px; }
-    .work-item{ flex-direction: column !important; gap: 26px; }
-    .work-item .frame{ max-height: 420px; margin: 0 auto; width: 100%; max-width: 320px; flex: none; }
-  }
-  @media (max-width: 480px){
-    nav .links{ display:none; }
-  }
-</style>
-</head>
-<body>
-
-<div class="glow glow-1"></div>
-<div class="glow glow-2"></div>
-<div class="glow glow-3"></div>
-
-<nav>
-  <div class="logo">Yash Kumar</div>
-  <div class="links">
-    <a href="#work">Work</a>
-    <a href="#toolkit">Toolkit</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
-  </div>
-</nav>
-
-<section class="hero">
-  <div class="eyebrow">Video Editor</div>
-  <h1>Yash Kumar</h1>
-  <p class="tagline">Edits designed to retain viewer attention.</p>
-  <p class="desc">I edit across short-form and long-form content, using Adobe Creative Cloud and other tools to shape footage into something worth someone's attention — clean cuts, motion graphics, and pacing that holds.</p>
-  <div class="cta">
-    <a href="#work" class="btn btn-primary">View my work</a>
-    <a href="#contact" class="btn btn-ghost">Get in touch</a>
-  </div>
-</section>
-
-<section id="work">
-  <div class="section-label"><span class="num">01</span> Selected work</div>
-  <h2>A sample of recent projects.</h2>
-
-  <div class="work-list">
-
-    <div class="work-item reveal">
-      <div class="frame">
-        <iframe src="https://www.youtube.com/embed/-L-187kVcPU" title="Clip 1" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="text">
-        <div class="meta"><span class="index">01</span><span class="tag">Motion Graphics</span></div>
-        <h3>Dynamic Graphic Animation</h3>
-        <p>This motion graphics piece is designed to grab attention quickly and present key information in a clean, visual format. By combining smooth text transitions with well-timed visual elements, the video maintains a fast pace while keeping the main message simple and easy to follow. Every graphic is structured to guide the viewer’s focus and highlight important details without cluttering the screen, making it an effective option for modern promotional content.</p>
-      </div>
-    </div>
-
-    <div class="work-item reveal">
-      <div class="frame">
-        <iframe src="https://www.youtube.com/embed/EDFiiSvzaFI" title="Clip 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="text">
-        <div class="meta"><span class="index">02</span><span class="tag">Multilingual Edit</span></div>
-        <h3>AI-Driven Social Video Ad</h3>
-        <p>A German-language edit, working with foreign-language dialogue, timing, and captions. Note here what made this one different to cut, and what it shows about your range.</p>
-      </div>
-    </div>
-
-    <div class="work-item reveal">
-      <div class="frame">
-        <iframe src="https://www.youtube.com/embed/49CQc4ZgEnQ" title="Clip 3" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="text">
-        <div class="meta"><span class="index">03</span><span class="tag">Talking Heads</span></div>
-        <h3>Fully Automatic Talking Head Video</h3>
-        <p>This edit elevates a seamless talking head presentation into a high-energy visual experience through precise pacing and strategic storytelling. By layering targeted b-roll footage and clean motion graphics over the primary presenter track, key narrative points are brought to the forefront to maximize viewer retention. Every cut, transition, and graphic overlay is timed to maintain a natural, engaging flow that keeps the audience locked in from start to finish.</p>
-      </div>
-    </div>
-
-    <div class="work-item reveal">
-      <div class="frame">
-        <iframe src="https://www.youtube.com/embed/Mt0Kkc3c2TI" title="Clip 4" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      </div>
-      <div class="text">
-        <div class="meta"><span class="index">04</span><span class="tag">Captions &amp; Transitions</span></div>
-        <h3>High-Retention Short</h3>
-        <p>This edit transforms everyday raw footage into a fast-paced, highly engaging social video built around a strong opening hook. Using tight pacing, seamless transitions, and strategic sound design, the video keeps viewers locked in from the first second. Layered b-roll and custom music choices elevate the overall energy without losing the casual, authentic feel that works best for Instagram content.</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<section id="toolkit">
-  <div class="section-label"><span class="num">02</span> Toolkit</div>
-  <h2>How I work</h2>
-  <p class="toolkit-intro">I work primarily in the Adobe Creative Cloud ecosystem, moving between apps depending on what a project needs, for fast-turnaround social edits.</p>
-  <div class="pill-row">
-    <div class="pill reveal"><span class="dot"></span> Premiere Pro</div>
-    <div class="pill reveal"><span class="dot"></span> After Effects</div>
-    <div class="pill reveal"><span class="dot"></span> Photoshop</div>
-    <div class="pill reveal"><span class="dot"></span> Illustrator</div>
-    <div class="pill reveal"><span class="dot"></span> CapCut</div>
-  </div>
-</section>
-
-<section id="about">
-  <div class="section-label"><span class="num">03</span> About</div>
-  <div class="about">
-    <p class="big-quote reveal">I started editing about a year ago and taught myself motion graphics along the way — that's the part of the craft I care about <em>MOST</em>.</p>
-    <div class="reveal">
-      <p>I edit across formats, short-form and long-form projects, adapting pacing and style to whatever the project calls for. My focus is clean cuts and graphics that support the story instead of getting in the way of it.</p>
-      <p>I'm looking for an editing role, and I'm ready to bring the same care to your project that went into every clip above.</p>
-    </div>
-  </div>
-</section>
-
-<section id="contact" class="outro">
-  <div class="outro-card">
-    <div class="section-label" style="justify-content:center"><span class="num">04</span> Contact</div>
-    <h2 class="reveal" style="background:linear-gradient(135deg, var(--accent-2), var(--accent)); -webkit-background-clip:text; background-clip:text; color:transparent;">Have a project?<br>Let's cut it together.</h2>
-    <p class="reveal">Open to editing roles, short-form and long-form projects.</p>
-    <a href="mailto:yash.kumar.98052@gmail.com" class="email-link reveal">yash.kumar.98052@gmail.com</a>
-  </div>
-</section>
-
-<footer>
-  <span>© <span id="year"></span> Yash Kumar</span>
-  <span>Edited by hand, one cut at a time.</span>
-</footer>
-
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  // tie the ambient glow to scroll position for a live, liquid feel
-  const glow1 = document.querySelector('.glow-1');
-  const glow2 = document.querySelector('.glow-2');
-  const glow3 = document.querySelector('.glow-3');
-  let ticking = false;
-  function updateGlow(){
-    const y = window.scrollY;
-    if(glow1) glow1.style.transform = `translate(${y * 0.06}px, ${y * 0.12}px) scale(${1 + y * 0.0002})`;
-    if(glow2) glow2.style.transform = `translate(${-y * 0.08}px, ${-y * 0.05}px) scale(${1 + y * 0.00015})`;
-    if(glow3) glow3.style.transform = `translate(${y * 0.05}px, ${-y * 0.1}px)`;
-    ticking = false;
-  }
-  window.addEventListener('scroll', () => {
-    if(!ticking){
-      window.requestAnimationFrame(updateGlow);
-      ticking = true;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yash Kumar — Video Editor &amp; Motion Graphics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            stoneBg: '#F5F4F0',
+            porcelain: '#FFFFFF',
+            ink: '#0F172A',
+            slateInk: '#475569',
+            cobalt: '#2563EB',
+            cobaltDeep: '#1D4ED8',
+            indigoGlow: '#4F46E5',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      background-color: #F5F4F0;
+      color: #0F172A;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
     }
-  });
-  updateGlow();
+    .studio-mesh {
+      background-image:
+        radial-gradient(46% 36% at 12% 8%, rgba(37, 99, 235, 0.08) 0%, rgba(245, 244, 240, 0) 100%),
+        radial-gradient(40% 34% at 88% 12%, rgba(79, 70, 229, 0.08) 0%, rgba(245, 244, 240, 0) 100%);
+    }
+    .bento-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px -16px rgba(15, 23, 42, 0.12);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, border-color 0.25s ease;
+    }
+    .bento-card-interactive:hover {
+      transform: translateY(-3px);
+      border-color: rgba(37, 99, 235, 0.28);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05), 0 22px 42px -18px rgba(37, 99, 235, 0.18);
+    }
+    .floating-nav {
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(15, 23, 42, 0.09);
+      box-shadow: 0 8px 30px -10px rgba(15, 23, 42, 0.12);
+    }
+    .screening-shell {
+      background: linear-gradient(145deg, #0F172A 0%, #162038 58%, #0F172A 100%);
+      box-shadow: 0 24px 60px -20px rgba(15, 23, 42, 0.35);
+    }
+    .contact-dark-card {
+      background: linear-gradient(155deg, #1E3A8A 0%, #172554 48%, #0F172A 100%);
+      box-shadow: 0 20px 50px -20px rgba(30, 58, 138, 0.45);
+    }
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .stage-img {
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stage-wrap:hover .stage-img {
+      transform: scale(1.03);
+    }
+    @keyframes pulseRing {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.4; }
+    }
+    .live-dot {
+      animation: pulseRing 2.2s ease-in-out infinite;
+    }
+    .toast-enter {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .toast-exit {
+      transform: translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .queue-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+    }
+    .queue-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .queue-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .queue-scroll::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.3);
+      border-radius: 9999px;
+    }
+    .queue-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.55);
+    }
+  </style>
+</head>
+<body class="studio-mesh antialiased selection:bg-blue-600/15 selection:text-blue-900">
 
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if(e.isIntersecting){
-        e.target.classList.add('in');
-        io.unobserve(e.target);
+  <!-- Floating Pill Navigation -->
+  <header class="fixed top-4 inset-x-0 z-40 px-4">
+    <div class="max-w-5xl mx-auto floating-nav rounded-full px-3 sm:px-4 h-14 flex items-center justify-between gap-3">
+      <a href="#top" class="flex items-center gap-2.5 group shrink-0 pl-1">
+        <span class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white font-bold text-xs tracking-tight flex items-center justify-center shadow-sm">
+          YK
+        </span>
+        <div class="leading-tight">
+          <span class="block text-sm font-semibold tracking-tight text-ink">Yash Kumar</span>
+          <span class="block text-[11px] text-slate-500">Video Editor</span>
+        </div>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium text-slate-600" aria-label="Primary Navigation">
+        <a href="#work" class="px-3.5 py-1.5 rounded-full hover:bg-slate-100 hover:text-ink transition-colors">Work</a>
+        <a href="#services" class="px-3.5 py-1.5 rounded-full hover:bg-slate-100 hover:text-ink transition-colors">Capabilities</a>
+        <a href="#process" class="px-3.5 py-1.5 rounded-full hover:bg-slate-100 hover:text-ink transition-colors">Workflow</a>
+        <a href="#about" class="px-3.5 py-1.5 rounded-full hover:bg-slate-100 hover:text-ink transition-colors">About</a>
+        <a href="#contact" class="px-3.5 py-1.5 rounded-full hover:bg-slate-100 hover:text-ink transition-colors">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button
+          id="navHireBtn"
+          type="button"
+          class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cobalt hover:bg-cobaltDeep text-white text-xs sm:text-sm font-semibold tracking-tight shadow-sm shadow-blue-600/25 transition-colors cursor-pointer"
+        >
+          <span>Hire Me</span>
+          <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+        </button>
+        <button
+          id="mobileMenuBtn"
+          type="button"
+          aria-label="Toggle Menu"
+          aria-expanded="false"
+          class="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <i data-lucide="menu" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileMenu" class="hidden md:hidden max-w-5xl mx-auto mt-2 rounded-2xl floating-nav p-3 space-y-1">
+      <a href="#work" class="block px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100">Selected Work</a>
+      <a href="#services" class="block px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100">Capabilities</a>
+      <a href="#process" class="block px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100">Workflow</a>
+      <a href="#about" class="block px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-100">About &amp; Tools</a>
+      <a href="#contact" class="block px-3.5 py-2.5 rounded-xl text-sm font-semibold text-cobalt bg-blue-50">Hire Me / Start a Project</a>
+    </div>
+  </header>
+
+  <main id="top" class="pt-24 sm:pt-28">
+
+    <!-- Asymmetric Bento Hero -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+
+        <!-- Main Editorial Pitch Bento -->
+        <div class="lg:col-span-7 bento-card rounded-3xl p-7 sm:p-10 flex flex-col justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-medium text-emerald-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+              <span>Open for Freelance Projects &amp; Editing Roles</span>
+            </div>
+
+            <h1 class="mt-6 text-4xl sm:text-5xl font-extrabold tracking-tight text-ink leading-[1.06]">
+              Edits designed to
+              <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500">
+                retain viewer attention.
+              </span>
+            </h1>
+
+            <p class="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-xl">
+              I'm <span class="text-ink font-semibold">Yash Kumar</span> — a video editor shaping short-form and long-form footage with Adobe Creative Cloud into clean cuts, purposeful motion graphics, and pacing that holds.
+            </p>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-slate-100 flex flex-wrap items-center gap-3">
+            <button
+              id="heroFreelanceBtn"
+              type="button"
+              class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-cobalt hover:bg-cobaltDeep text-white text-sm font-semibold shadow-md shadow-blue-600/20 transition-all cursor-pointer"
+            >
+              <i data-lucide="clapperboard" class="w-4 h-4"></i>
+              <span>Hire for a Project</span>
+            </button>
+            <button
+              id="heroRoleBtn"
+              type="button"
+              class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium transition-all cursor-pointer"
+            >
+              <i data-lucide="briefcase" class="w-4 h-4 text-sky-400"></i>
+              <span>Hiring for a Role?</span>
+            </button>
+            <a
+              href="#work"
+              class="inline-flex items-center gap-1.5 px-4 py-3 text-sm font-semibold text-slate-600 hover:text-cobalt transition-colors"
+            >
+              <span>Watch Cuts</span>
+              <i data-lucide="arrow-down" class="w-4 h-4"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Visual & Craft Bento Stack -->
+        <div class="lg:col-span-5 flex flex-col gap-5">
+          <!-- Daylight Studio Frame -->
+          <div class="bento-card rounded-3xl overflow-hidden flex-1 flex flex-col">
+            <div class="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+              <img
+                src="assets/hero.jpg"
+                alt="Yash Kumar modern daylight video editing studio workspace"
+                class="w-full h-full object-cover"
+              />
+              <div class="absolute top-3.5 left-3.5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-md border border-white/60 text-[11px] font-semibold text-ink shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                <span>POST-PRODUCTION SUITE</span>
+              </div>
+            </div>
+
+            <!-- Interactive Mini Timeline Strip -->
+            <div class="p-4 sm:p-5 bg-white">
+              <div class="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-2">
+                <span>TIMELINE FLOW</span>
+                <span class="text-cobalt font-semibold">00:00:24:00</span>
+              </div>
+              <div class="grid grid-cols-12 gap-1.5 h-3">
+                <div class="col-span-3 rounded-full bg-blue-600"></div>
+                <div class="col-span-4 rounded-full bg-indigo-500/85"></div>
+                <div class="col-span-3 rounded-full bg-sky-400"></div>
+                <div class="col-span-2 rounded-full bg-slate-200"></div>
+              </div>
+              <div class="mt-2.5 flex items-center justify-between text-xs text-slate-500">
+                <span>Hook &rarr; Pacing &rarr; Motion &rarr; Sound</span>
+                <a href="#work" class="font-semibold text-cobalt hover:underline">15 Cuts &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Two Mini Stat/Focus Tiles -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bento-card rounded-2xl p-4 sm:p-5">
+              <span class="inline-flex w-8 h-8 rounded-xl bg-blue-50 text-cobalt items-center justify-center">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              </span>
+              <p class="mt-3 text-xs font-medium text-slate-500">Core Passion</p>
+              <p class="text-sm font-bold text-ink mt-0.5">Motion Graphics</p>
+            </div>
+            <div class="bento-card rounded-2xl p-4 sm:p-5">
+              <span class="inline-flex w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 items-center justify-center">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+              </span>
+              <p class="mt-3 text-xs font-medium text-slate-500">Primary Suite</p>
+              <p class="text-sm font-bold text-ink mt-0.5">Adobe Creative Cloud</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 01: Interactive Studio Screening Room -->
+    <section id="work" class="py-16 sm:py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div>
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-cobalt">
+              <span class="w-5 h-px bg-cobalt"></span>
+              01 / Selected Work
+            </span>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+              The Screening Room
+            </h2>
+            <p class="mt-2 text-sm sm:text-base text-slate-600 max-w-xl">
+              Filter by style, switch cuts on the reel, or open any project for the full editing breakdown.
+            </p>
+          </div>
+
+          <!-- Category Filters -->
+          <div id="workFilters" class="flex flex-wrap gap-2" role="tablist" aria-label="Filter projects by category">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Unified Screening Stage & Reel Queue -->
+        <div class="mt-8 screening-shell rounded-3xl p-4 sm:p-6 lg:p-7 text-white border border-slate-800/80">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+            <!-- Left Active Video Player Stage -->
+            <div id="activeStage" class="lg:col-span-7 flex flex-col justify-between">
+              <!-- Rendered by JS -->
+            </div>
+
+            <!-- Right Unified Reel Queue (All 15 Clips) -->
+            <div class="lg:col-span-5 flex flex-col justify-between min-h-0">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span class="text-xs font-mono uppercase tracking-widest text-slate-300">Reel Queue</span>
+                </div>
+                <span id="queueCount" class="text-xs font-mono text-sky-400">15 Cuts</span>
+              </div>
+
+              <div id="projectsGrid" class="queue-scroll space-y-2.5 flex-1 max-h-[440px] lg:max-h-[470px] overflow-y-auto pr-1.5">
+                <!-- Rendered by JS -->
+              </div>
+
+              <div class="mt-4 pt-3.5 border-t border-white/10 flex items-center justify-between gap-3">
+                <span class="text-xs text-slate-400">Click any clip to play in the monitor</span>
+                <a
+                  href="https://www.youtube.com/playlist?list=PLYo3gYw8HnSg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-400 hover:text-sky-300 shrink-0"
+                >
+                  <span>YouTube Playlist</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 02: Capabilities (Dual Track Bento) -->
+    <section id="services" class="py-16 sm:py-20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-cobalt">
+              <span class="w-5 h-px bg-cobalt"></span>
+              02 / Capabilities
+            </span>
+            <h2 class="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+              Built for clients and creative teams.
+            </h2>
+          </div>
+
+          <!-- Tactile Segmented Switcher -->
+          <div class="inline-flex p-1.5 rounded-full bg-white border border-slate-200/90 shadow-sm self-start md:self-auto">
+            <button
+              id="toggleFreelanceBtn"
+              type="button"
+              class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+            >
+              For Freelance Clients
+            </button>
+            <button
+              id="toggleRoleBtn"
+              type="button"
+              class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+            >
+              For Hiring Managers
+            </button>
+          </div>
+        </div>
+
+        <p id="capabilitiesSubtitle" class="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl">
+          <!-- Updated by JS -->
+        </p>
+
+        <div id="capabilitiesGrid" class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 03: Workflow Strip -->
+    <section id="process" class="py-12 sm:py-16">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bento-card rounded-3xl p-6 sm:p-9">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-7 border-b border-slate-100">
+            <div>
+              <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-cobalt">
+                <span class="w-5 h-px bg-cobalt"></span>
+                03 / Workflow
+              </span>
+              <h2 class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+                Simple, dependable post-production.
+              </h2>
+            </div>
+            <p class="text-sm text-slate-500 max-w-md">
+              Clear communication from raw footage drop to platform-ready export.
+            </p>
+          </div>
+
+          <div class="mt-7 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-blue-50 text-cobalt font-mono text-xs font-bold">01</span>
+              <h3 class="mt-3.5 text-base font-bold text-ink">Brief &amp; Footage</h3>
+              <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                Lock in the hook, target platform, and pacing references so every cut serves your goal.
+              </p>
+            </div>
+            <div>
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-indigo-50 text-indigo-600 font-mono text-xs font-bold">02</span>
+              <h3 class="mt-3.5 text-base font-bold text-ink">Story &amp; Pacing Cut</h3>
+              <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                Trim dead air and build clean rhythm in Premiere Pro tailored for short- or long-form retention.
+              </p>
+            </div>
+            <div>
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-sky-50 text-sky-600 font-mono text-xs font-bold">03</span>
+              <h3 class="mt-3.5 text-base font-bold text-ink">Motion &amp; Sound</h3>
+              <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                Layer After Effects motion graphics, targeted b-roll, synced captions, and intentional sound design.
+              </p>
+            </div>
+            <div>
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 font-mono text-xs font-bold">04</span>
+              <h3 class="mt-3.5 text-base font-bold text-ink">Review &amp; Delivery</h3>
+              <p class="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                Turn around revisions quickly and export crisp masters ready for Instagram, YouTube, and ads.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 04: About & Creative Dock -->
+    <section id="about" class="py-14 sm:py-18">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+          <!-- About Story Card -->
+          <div class="lg:col-span-6 bento-card rounded-3xl p-7 sm:p-9 flex flex-col justify-between">
+            <div>
+              <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-cobalt">
+                <span class="w-5 h-px bg-cobalt"></span>
+                04 / About Yash
+              </span>
+              <h2 class="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-ink">
+                Clean cuts and motion graphics that support the story.
+              </h2>
+
+              <div class="mt-5 space-y-4 text-sm sm:text-base text-slate-600 leading-relaxed">
+                <p>
+                  I started editing about a year ago and taught myself motion graphics along the way — that's the part of the craft I care about <span class="text-ink font-semibold">most</span>.
+                </p>
+                <p>
+                  I edit across formats — short-form and long-form projects — adapting pacing and style to whatever the project calls for. My focus is clean cuts and graphics that support the story instead of getting in the way of it.
+                </p>
+                <p>
+                  I'm open to freelance projects and full-time editing roles, ready to bring the same care to your project that went into every cut above.
+                </p>
+              </div>
+            </div>
+
+            <div class="mt-7 pt-5 border-t border-slate-100 flex flex-wrap gap-2.5 text-xs font-medium">
+              <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700">Short-Form &amp; Reels</span>
+              <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-700">Long-Form &amp; Talking Head</span>
+              <span class="px-3 py-1.5 rounded-full bg-blue-50 text-cobalt">Self-Taught Motion Graphics</span>
+            </div>
+          </div>
+
+          <!-- Interactive Creative Dock Card -->
+          <div class="lg:col-span-6 bento-card rounded-3xl p-7 sm:p-9 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Software Stack</span>
+                  <h3 class="mt-1 text-xl font-bold text-ink">Adobe Creative Cloud &amp; Social Tools</h3>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-blue-50 text-cobalt text-xs font-semibold">5 Tools</span>
+              </div>
+
+              <p class="mt-2 text-sm text-slate-500">
+                Select any tool to see how it fits into my editing workflow.
+              </p>
+
+              <!-- App Icon Dock -->
+              <div id="toolkitList" class="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <!-- Rendered by JS -->
+              </div>
+            </div>
+
+            <div id="toolkitDetail" class="mt-6 rounded-2xl bg-stoneBg border border-slate-200/80 p-5">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 05: Split Conversion Contact Studio -->
+    <section id="contact" class="py-16 sm:py-22">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
+          <!-- Left Deep Cobalt/Indigo Contact Card -->
+          <div class="lg:col-span-5 contact-dark-card rounded-3xl p-7 sm:p-9 text-white flex flex-col justify-between">
+            <div>
+              <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-sky-300">
+                <span class="w-5 h-px bg-sky-300"></span>
+                05 / Contact
+              </span>
+              <h2 class="mt-3 text-3xl sm:text-4xl font-bold tracking-tight leading-tight">
+                Have a project? Let's cut it together.
+              </h2>
+              <p class="mt-4 text-sm sm:text-base text-blue-100/80 leading-relaxed">
+                Open to freelance short-form and long-form projects, as well as full-time or contract video editing roles.
+              </p>
+
+              <!-- Direct Email Box -->
+              <div class="mt-7 rounded-2xl bg-white/10 border border-white/15 p-4 backdrop-blur-sm">
+                <span class="block text-[11px] font-mono uppercase tracking-wider text-sky-200">Direct Email</span>
+                <div class="mt-1.5 flex items-center justify-between gap-2 flex-wrap">
+                  <a
+                    href="mailto:yash.kumar.98052@gmail.com"
+                    class="text-sm sm:text-base font-semibold text-white hover:text-sky-200 transition-colors break-all"
+                  >
+                    yash.kumar.98052@gmail.com
+                  </a>
+                  <button
+                    id="copyEmailBtn"
+                    type="button"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-ink hover:bg-sky-100 text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span>Copy</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-white/15 space-y-3 text-sm text-blue-100/90">
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300 shrink-0"></i>
+                <span>Available for freelance &amp; ongoing projects</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-300 shrink-0"></i>
+                <span>Open to full-time &amp; remote editing roles</span>
+              </div>
+              <div class="flex items-center gap-2.5">
+                <i data-lucide="globe" class="w-4 h-4 text-sky-300 shrink-0"></i>
+                <a
+                  href="https://yashkumarportfolio.github.io/Yash-portfolio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="hover:text-white underline decoration-white/30 underline-offset-4 truncate"
+                >
+                  yashkumarportfolio.github.io/Yash-portfolio
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Porcelain Interactive Brief Builder -->
+          <div class="lg:col-span-7 bento-card rounded-3xl p-7 sm:p-9">
+            <form id="inquiryForm" class="space-y-5">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
+                  I'm reaching out for
+                </label>
+                <div class="grid grid-cols-2 gap-2.5">
+                  <button
+                    id="formModeFreelance"
+                    type="button"
+                    class="px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all cursor-pointer"
+                  >
+                    Freelance Project
+                  </button>
+                  <button
+                    id="formModeRole"
+                    type="button"
+                    class="px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all cursor-pointer"
+                  >
+                    Job / Editing Role
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label id="formatLabel" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
+                  Project Focus
+                </label>
+                <div id="formatOptions" class="flex flex-wrap gap-2">
+                  <!-- Rendered by JS -->
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label for="senderName" class="block text-xs font-semibold text-slate-700 mb-1.5">Your Name / Company</label>
+                  <input
+                    id="senderName"
+                    type="text"
+                    required
+                    placeholder="Alex Rivera / Studio"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-stoneBg border border-slate-200 text-sm text-ink placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-cobalt focus:ring-2 focus:ring-blue-600/15"
+                  />
+                </div>
+                <div>
+                  <label for="senderEmail" class="block text-xs font-semibold text-slate-700 mb-1.5">Your Email</label>
+                  <input
+                    id="senderEmail"
+                    type="email"
+                    required
+                    placeholder="you@company.com"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-stoneBg border border-slate-200 text-sm text-ink placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-cobalt focus:ring-2 focus:ring-blue-600/15"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="senderBrief" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Project Details or Role Summary
+                </label>
+                <textarea
+                  id="senderBrief"
+                  rows="4"
+                  required
+                  placeholder="Share your video format, style references, timeline, or role details..."
+                  class="w-full px-3.5 py-2.5 rounded-xl bg-stoneBg border border-slate-200 text-sm text-ink placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-cobalt focus:ring-2 focus:ring-blue-600/15 resize-y"
+                ></textarea>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-3 pt-1">
+                <button
+                  type="submit"
+                  class="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-cobalt hover:bg-cobaltDeep text-white text-sm font-semibold shadow-md shadow-blue-600/20 transition-colors cursor-pointer"
+                >
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                  <span>Open in Email App</span>
+                </button>
+                <button
+                  id="copyBriefBtn"
+                  type="button"
+                  class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-full bg-slate-100 hover:bg-slate-200/80 text-ink text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  <i data-lucide="clipboard-copy" class="w-4 h-4 text-cobalt"></i>
+                  <span>Copy Brief</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/80 py-9">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-semibold text-ink">&copy; 2026 Yash Kumar</span>
+        <span>&mdash;</span>
+        <span>Edited by hand, one cut at a time.</span>
+      </div>
+      <div class="flex items-center gap-5 font-medium">
+        <a href="#work" class="hover:text-cobalt transition-colors">Work</a>
+        <a href="#services" class="hover:text-cobalt transition-colors">Capabilities</a>
+        <a href="#about" class="hover:text-cobalt transition-colors">About</a>
+        <a href="#contact" class="hover:text-cobalt transition-colors">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Project Full Breakdown Modal -->
+  <div
+    id="projectModal"
+    class="hidden fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4 sm:p-6"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+  >
+    <div class="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white border border-slate-200 shadow-2xl">
+      <div class="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 bg-white/95 backdrop-blur-md border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <span id="modalClipTag" class="px-2.5 py-1 rounded-full bg-blue-50 text-cobalt text-[11px] font-mono font-semibold uppercase tracking-wider"></span>
+          <span id="modalCategory" class="text-xs font-medium text-slate-500"></span>
+        </div>
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close project details"
+          class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-ink transition-colors cursor-pointer"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-6">
+        <div class="space-y-2.5">
+          <div class="relative rounded-2xl overflow-hidden border border-slate-200 aspect-video bg-slate-950">
+            <iframe
+              id="modalVideoIframe"
+              src=""
+              title="Yash Kumar video edit player"
+              class="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+          <div class="flex items-center justify-between gap-3 text-xs text-slate-500">
+            <span>Embedded directly from YouTube</span>
+            <a
+              id="modalWatchLink"
+              href="https://www.youtube.com/playlist?list=PLYo3gYw8HnSg"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 text-cobalt hover:text-cobaltDeep font-semibold transition-colors"
+            >
+              <span>Open on YouTube</span>
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h3 id="modalTitle" class="text-2xl font-bold tracking-tight text-ink"></h3>
+          <p id="modalDescription" class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed"></p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="rounded-2xl bg-stoneBg border border-slate-200/80 p-4">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Craft Highlights</span>
+            <ul id="modalHighlights" class="mt-2.5 space-y-2 text-sm text-slate-700"></ul>
+          </div>
+          <div class="rounded-2xl bg-stoneBg border border-slate-200/80 p-4">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Tools Used</span>
+            <div id="modalTools" class="mt-2.5 flex flex-wrap gap-2"></div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2">
+            <button
+              id="prevProjectBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+            >
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              <span>Prev</span>
+            </button>
+            <button
+              id="nextProjectBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+            >
+              <span>Next</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <button
+            id="requestSimilarBtn"
+            type="button"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-cobalt hover:bg-cobaltDeep text-white text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+          >
+            <span>Request a Similar Edit</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Page Toast Notification -->
+  <div
+    id="toast"
+    role="status"
+    aria-live="polite"
+    class="fixed bottom-5 right-5 z-50 px-4 py-3 rounded-2xl bg-ink text-white text-sm shadow-2xl flex items-center gap-2.5 transition-all duration-200 toast-exit"
+  >
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-sky-400 shrink-0"></i>
+    <span id="toastMessage">Copied to clipboard</span>
+  </div>
+
+  <script>
+    const EMAIL_ADDRESS = 'yash.kumar.98052@gmail.com';
+    const YOUTUBE_PLAYLIST_ID = 'PLYo3gYw8HnSg';
+    const YOUTUBE_PLAYLIST_EMBED = `https://www.youtube.com/embed/videoseries?list=${YOUTUBE_PLAYLIST_ID}&rel=0&modestbranding=1`;
+    const LIVE_PORTFOLIO_URL = 'https://yashkumarportfolio.github.io/Yash-portfolio';
+
+    const PROJECTS = [
+      {
+        id: 'proj-1',
+        clipLabel: 'CLIP 01',
+        videoId: '-L-187kVcPU',
+        timecode: '00:00:18:12',
+        title: 'Dynamic Graphic Animation',
+        category: 'Motion Graphics',
+        formatTag: 'Motion Graphics',
+        image: 'assets/clip1.jpg',
+        summary: 'Fast-paced promotional motion graphics piece with smooth text transitions and clean visual hierarchy.',
+        description:
+          'This motion graphics piece is designed to grab attention quickly and present key information in a clean, visual format. By combining smooth text transitions with well-timed visual elements, the video maintains a fast pace while keeping the main message simple and easy to follow. Every graphic is structured to guide the viewer\'s focus and highlight important details without cluttering the screen, making it an effective option for modern promotional content.',
+        highlights: [
+          'Smooth kinetic text transitions timed to visual beats',
+          'Clean visual hierarchy that keeps the message effortless to follow',
+          'Structured for high-impact promotional & social content',
+        ],
+        tools: ['After Effects', 'Illustrator', 'Premiere Pro'],
+        watchUrl: 'https://www.youtube.com/shorts/-L-187kVcPU',
+      },
+      {
+        id: 'proj-2',
+        clipLabel: 'CLIP 02',
+        videoId: 'EDFiiSvzaFI',
+        timecode: '00:00:29:04',
+        title: 'AI-Driven Social Video Ad',
+        category: 'Multilingual Edit',
+        formatTag: 'Ad / Multilingual',
+        image: 'assets/clip2.jpg',
+        summary: 'German-language commercial social ad balancing foreign-language dialogue timing and synced captions.',
+        description:
+          'A German-language commercial edit built around foreign-language dialogue timing, rhythmic pacing, and synchronized captions. Cutting outside a native language demands extra attention to cadence, visual cues, and caption readability — showing adaptability and precision across international social ad formats.',
+        highlights: [
+          'Accurate German-language dialogue timing and cadence',
+          'Synchronized captions tuned for fast mobile viewing',
+          'Commercial ad pacing tailored for social conversion',
+        ],
+        tools: ['Premiere Pro', 'After Effects', 'CapCut'],
+        watchUrl: 'https://www.youtube.com/shorts/EDFiiSvzaFI',
+      },
+      {
+        id: 'proj-3',
+        clipLabel: 'CLIP 03',
+        videoId: '49CQc4ZgEnQ',
+        timecode: '00:00:42:18',
+        title: 'Fully Automatic Talking Head Video',
+        category: 'Talking Heads',
+        formatTag: 'Long-Form / Talking Head',
+        image: 'assets/clip3.jpg',
+        summary: 'High-energy talking-head cut layering targeted b-roll and clean motion graphics for retention.',
+        description:
+          'This edit elevates a seamless talking head presentation into a high-energy visual experience through precise pacing and strategic storytelling. By layering targeted b-roll footage and clean motion graphics over the primary presenter track, key narrative points are brought to the forefront to maximize viewer retention. Every cut, transition, and graphic overlay is timed to maintain a natural, engaging flow that keeps the audience locked in from start to finish.',
+        highlights: [
+          'Targeted b-roll layered cleanly over the presenter track',
+          'Motion graphic callouts emphasizing key narrative moments',
+          'Natural, energetic pacing built for strong audience retention',
+        ],
+        tools: ['Premiere Pro', 'After Effects', 'Photoshop'],
+        watchUrl: 'https://www.youtube.com/shorts/49CQc4ZgEnQ',
+      },
+      {
+        id: 'proj-4',
+        clipLabel: 'CLIP 04',
+        videoId: 'Mt0Kkc3c2TI',
+        timecode: '00:00:31:09',
+        title: 'High-Retention Short',
+        category: 'Captions & Transitions',
+        formatTag: 'Short-Form / Reels',
+        image: 'assets/clip4.jpg',
+        summary: 'Fast-paced Instagram short built around a strong opening hook, seamless transitions, and sound design.',
+        description:
+          'This edit transforms everyday raw footage into a fast-paced, highly engaging social video built around a strong opening hook. Using tight pacing, seamless transitions, and strategic sound design, the video keeps viewers locked in from the first second. Layered b-roll and custom music choices elevate the overall energy without losing the casual, authentic feel that works best for Instagram content.',
+        highlights: [
+          'Strong opening hook engineered to hold viewers from second one',
+          'Tight pacing, seamless transitions, and strategic sound design',
+          'Authentic Instagram-native feel with layered b-roll and music',
+        ],
+        tools: ['Premiere Pro', 'CapCut', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/Mt0Kkc3c2TI',
+      },
+      {
+        id: 'proj-5',
+        clipLabel: 'CLIP 05',
+        videoId: 'tSKj3RuI0_c',
+        timecode: '00:00:24:00',
+        title: 'HeyGen Ad 18.2',
+        category: 'Commercial Ads',
+        formatTag: 'Ad / Multilingual',
+        image: 'https://i.ytimg.com/vi/tSKj3RuI0_c/hqdefault.jpg',
+        summary: 'AI-presenter commercial social ad cut tailored for clear hook delivery and product messaging.',
+        description:
+          'AI-presenter commercial social ad cut tailored for clear hook delivery, crisp pacing, and direct product messaging optimized for mobile social feeds.',
+        highlights: [
+          'Clear opening hook tailored for paid social ad performance',
+          'Clean visual pacing aligned with AI-presenter delivery',
+          'Synced captions and crisp call-to-action framing',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/tSKj3RuI0_c',
+      },
+      {
+        id: 'proj-6',
+        clipLabel: 'CLIP 06',
+        videoId: 'mOA5fBiLhKk',
+        timecode: '00:00:21:14',
+        title: 'HeyGen Ad 16.5',
+        category: 'Commercial Ads',
+        formatTag: 'Ad / Multilingual',
+        image: 'https://i.ytimg.com/vi/mOA5fBiLhKk/hqdefault.jpg',
+        summary: 'Short-form AI commercial ad edit focused on clean pacing, captions, and conversion clarity.',
+        description:
+          'Short-form AI commercial ad edit focused on clean pacing, readable captions, and conversion clarity designed to hold attention in vertical feeds.',
+        highlights: [
+          'Tight commercial pacing built for short-form ad retention',
+          'Clean on-screen captions and visual emphasis',
+          'Structured for clear product value communication',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/mOA5fBiLhKk',
+      },
+      {
+        id: 'proj-7',
+        clipLabel: 'CLIP 07',
+        videoId: 'CeWma9seEWE',
+        timecode: '00:00:28:06',
+        title: 'Short-Form Cut #1',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/CeWma9seEWE/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/CeWma9seEWE',
+      },
+      {
+        id: 'proj-8',
+        clipLabel: 'CLIP 08',
+        videoId: 'HtjarqqBPWU',
+        timecode: '00:00:26:11',
+        title: 'Short-Form Cut #2',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/HtjarqqBPWU/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/HtjarqqBPWU',
+      },
+      {
+        id: 'proj-9',
+        clipLabel: 'CLIP 09',
+        videoId: 'FTGBwiKQClo',
+        timecode: '00:00:30:02',
+        title: 'Short-Form Cut #3',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/FTGBwiKQClo/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/FTGBwiKQClo',
+      },
+      {
+        id: 'proj-10',
+        clipLabel: 'CLIP 10',
+        videoId: '1Th0AZeWqPI',
+        timecode: '00:00:27:19',
+        title: 'Short-Form Cut #4',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/1Th0AZeWqPI/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/1Th0AZeWqPI',
+      },
+      {
+        id: 'proj-11',
+        clipLabel: 'CLIP 11',
+        videoId: 'FCTY_MPHaaA',
+        timecode: '00:00:25:08',
+        title: 'Short-Form Cut #5',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/FCTY_MPHaaA/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/FCTY_MPHaaA',
+      },
+      {
+        id: 'proj-12',
+        clipLabel: 'CLIP 12',
+        videoId: 'V411ZivtYiA',
+        timecode: '00:00:29:15',
+        title: 'Short-Form Cut #7',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/V411ZivtYiA/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/V411ZivtYiA',
+      },
+      {
+        id: 'proj-13',
+        clipLabel: 'CLIP 13',
+        videoId: 'WhvC4mlS0ZI',
+        timecode: '00:00:23:20',
+        title: 'Short-Form Cut #8',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/WhvC4mlS0ZI/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/WhvC4mlS0ZI',
+      },
+      {
+        id: 'proj-14',
+        clipLabel: 'CLIP 14',
+        videoId: 'np7Apd9f7bU',
+        timecode: '00:00:32:04',
+        title: 'Short-Form Cut #9',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/np7Apd9f7bU/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/np7Apd9f7bU',
+      },
+      {
+        id: 'proj-15',
+        clipLabel: 'CLIP 15',
+        videoId: 'xyeLwApvdPw',
+        timecode: '00:00:28:17',
+        title: 'Short-Form Cut #10',
+        category: 'Short-Form Reels',
+        formatTag: 'Short-Form / Reels',
+        image: 'https://i.ytimg.com/vi/xyeLwApvdPw/hqdefault.jpg',
+        summary: 'Short-form social edit crafted for tight pacing, smooth rhythm, and viewer retention.',
+        description:
+          'Short-form social edit from Yash Kumar\'s live portfolio playlist, crafted for clean pacing, visual momentum, and strong vertical-feed viewer retention.',
+        highlights: [
+          'Tight short-form pacing tailored for viewer retention',
+          'Clean cuts and timing crafted in Adobe Creative Cloud',
+          'Optimized for vertical Reels and YouTube Shorts',
+        ],
+        tools: ['Premiere Pro', 'After Effects'],
+        watchUrl: 'https://www.youtube.com/shorts/xyeLwApvdPw',
+      },
+    ];
+
+    const CAPABILITIES = {
+      freelance: {
+        subtitle:
+          'Flexible editing support for creators, startups, and brands who want clean pacing, custom motion graphics, and fast turnaround.',
+        items: [
+          {
+            icon: 'zap',
+            title: 'Short-Form Retention Edits',
+            desc: 'Instagram Reels, YouTube Shorts, and social clips shaped around a strong opening hook, tight cuts, sound design, and dynamic captions.',
+          },
+          {
+            icon: 'sparkles',
+            title: 'Motion Graphics & Kinetic Type',
+            desc: 'Custom After Effects animations, smooth text transitions, and clean visual callouts that support the message without clutter.',
+          },
+          {
+            icon: 'video',
+            title: 'Talking-Head & Long-Form',
+            desc: 'Story-driven presenter edits elevated with targeted b-roll, disciplined pacing, and graphic overlays that keep viewers watching.',
+          },
+          {
+            icon: 'languages',
+            title: 'Social Ads & Multilingual Cuts',
+            desc: 'Promotional video ads and foreign-language edits with accurate dialogue timing, synced captions, and crisp rhythm.',
+          },
+        ],
+      },
+      role: {
+        subtitle:
+          'Hiring for a video editor to join your agency, creator team, or post-production workflow? Here is what I bring to the table.',
+        items: [
+          {
+            icon: 'layers',
+            title: 'Adobe Creative Cloud Pipeline',
+            desc: 'Hands-on workflow across Premiere Pro, After Effects, Photoshop, and Illustrator — plus CapCut for fast-turnaround social delivery.',
+          },
+          {
+            icon: 'cpu',
+            title: 'Self-Taught Motion Graphics Depth',
+            desc: 'Built motion graphics skills from scratch with care for timing, typography, and story-supporting visual clarity.',
+          },
+          {
+            icon: 'shuffle',
+            title: 'Cross-Format Adaptability',
+            desc: 'Comfortable moving between rapid short-form social edits, talking-head long-form videos, and multilingual ad creatives.',
+          },
+          {
+            icon: 'clock',
+            title: 'Clean Craft & Ownership',
+            desc: 'Organized timelines, thoughtful cut discipline, and responsiveness to creative feedback from first assembly to final export.',
+          },
+        ],
+      },
+    };
+
+    const TOOLKIT = [
+      {
+        code: 'Pr',
+        name: 'Premiere Pro',
+        badge: 'Primary NLE',
+        accent: 'bg-indigo-600 text-white',
+        role: 'Core timeline editing, narrative assembly, audio sync, and fast-turnaround short-form and long-form delivery.',
+      },
+      {
+        code: 'Ae',
+        name: 'After Effects',
+        badge: 'Specialty',
+        accent: 'bg-blue-600 text-white',
+        role: 'Custom motion graphics, kinetic typography, smooth visual transitions, and clean on-screen callouts.',
+      },
+      {
+        code: 'Ps',
+        name: 'Photoshop',
+        badge: 'Visual Prep',
+        accent: 'bg-sky-600 text-white',
+        role: 'Asset preparation, clean cutouts, visual elements, and graphic treatments integrated into edits.',
+      },
+      {
+        code: 'Ai',
+        name: 'Illustrator',
+        badge: 'Vector Assets',
+        accent: 'bg-slate-800 text-white',
+        role: 'Crisp vector shapes, icons, and brand graphics built to scale cleanly inside After Effects.',
+      },
+      {
+        code: 'Cc',
+        name: 'CapCut',
+        badge: 'Fast Social',
+        accent: 'bg-teal-600 text-white',
+        role: 'Rapid social-native pacing, caption workflows, and agile turnaround for Instagram and Shorts.',
+      },
+    ];
+
+    const FORM_OPTIONS = {
+      freelance: ['Short-Form / Reels', 'Long-Form / Talking Head', 'Motion Graphics', 'Ad / Multilingual'],
+      role: ['Full-Time Video Editor', 'Contract / Retainer Role', 'Junior Motion Editor', 'Agency / Creator Team'],
+    };
+
+    const state = {
+      activeCategory: 'All',
+      activeStageId: PROJECTS[0].id,
+      autoplayStage: false,
+      hireMode: 'freelance',
+      activeToolIdx: 1,
+      selectedProjectId: null,
+      selectedFormat: FORM_OPTIONS.freelance[0],
+      toastTimer: null,
+    };
+
+    const CATEGORIES = ['All', ...new Set(PROJECTS.map((p) => p.category))];
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('toast-exit');
+      toast.classList.add('toast-enter');
+      if (state.toastTimer) clearTimeout(state.toastTimer);
+      state.toastTimer = setTimeout(() => {
+        toast.classList.remove('toast-enter');
+        toast.classList.add('toast-exit');
+      }, 2800);
+    }
+
+    function copyText(text, successMsg) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          () => showToast(successMsg),
+          () => fallbackCopy(text, successMsg)
+        );
+      } else {
+        fallbackCopy(text, successMsg);
       }
+    }
+
+    function fallbackCopy(text, successMsg) {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg);
+      } catch (e) {
+        showToast('Could not copy automatically — please copy manually.');
+      }
+      document.body.removeChild(area);
+    }
+
+    function getFilteredProjects() {
+      return state.activeCategory === 'All'
+        ? PROJECTS
+        : PROJECTS.filter((p) => p.category === state.activeCategory);
+    }
+
+    function renderFilters() {
+      const container = document.getElementById('workFilters');
+      container.innerHTML = CATEGORIES.map((cat) => {
+        const count = cat === 'All' ? PROJECTS.length : PROJECTS.filter((p) => p.category === cat).length;
+        const active = state.activeCategory === cat;
+        return `
+          <button
+            type="button"
+            data-category="${cat}"
+            role="tab"
+            aria-selected="${active}"
+            class="filter-btn px-3.5 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+              active
+                ? 'bg-ink text-white border-ink shadow-sm'
+                : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink'
+            }"
+          >
+            ${cat} <span class="opacity-65 ml-1">${count}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderScreeningRoom() {
+      const filtered = getFilteredProjects();
+      if (!filtered.some((p) => p.id === state.activeStageId)) {
+        state.activeStageId = filtered[0].id;
+      }
+      const activeProject = filtered.find((p) => p.id === state.activeStageId) || filtered[0];
+      const activeIdx = filtered.findIndex((p) => p.id === activeProject.id);
+      const embedUrl = `https://www.youtube.com/embed/${activeProject.videoId}?rel=0&modestbranding=1${
+        state.autoplayStage ? '&autoplay=1' : ''
+      }`;
+
+      document.getElementById('queueCount').textContent = `${filtered.length} ${filtered.length === 1 ? 'Cut' : 'Cuts'}`;
+
+      // Render left active video player monitor
+      const stage = document.getElementById('activeStage');
+      stage.innerHTML = `
+        <div>
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-white/10">
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-1 rounded-full bg-white/[0.08] border border-white/15 text-[11px] font-mono text-sky-300">
+                ${activeProject.clipLabel} &bull; ${activeProject.timecode}
+              </span>
+              <span class="px-2.5 py-1 rounded-full bg-blue-600/90 text-[11px] font-semibold text-white">
+                ${activeProject.category}
+              </span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-[11px] font-mono text-slate-400 mr-1">${String(activeIdx + 1).padStart(2, '0')} / ${String(filtered.length).padStart(2, '0')}</span>
+              <button
+                type="button"
+                data-stage-nav="-1"
+                aria-label="Previous clip"
+                class="stage-nav-btn w-7 h-7 rounded-full bg-white/[0.07] hover:bg-white/[0.15] border border-white/10 flex items-center justify-center text-slate-200 transition-colors cursor-pointer"
+              >
+                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              </button>
+              <button
+                type="button"
+                data-stage-nav="1"
+                aria-label="Next clip"
+                class="stage-nav-btn w-7 h-7 rounded-full bg-white/[0.07] hover:bg-white/[0.15] border border-white/10 flex items-center justify-center text-slate-200 transition-colors cursor-pointer"
+              >
+                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="relative rounded-2xl overflow-hidden border border-white/15 aspect-video bg-black shadow-2xl">
+            <iframe
+              id="stageVideoIframe"
+              src="${embedUrl}"
+              title="${activeProject.title}"
+              class="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+
+          <div class="mt-4">
+            <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-white">${activeProject.title}</h3>
+            <p class="mt-1.5 text-xs sm:text-sm text-slate-300 leading-relaxed">${activeProject.summary}</p>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3.5 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap gap-1.5">
+            ${activeProject.tools
+              .map(
+                (t) =>
+                  `<span class="px-2.5 py-1 rounded-full bg-white/[0.07] border border-white/10 text-xs text-slate-200">${t}</span>`
+              )
+              .join('')}
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              data-open-modal="${activeProject.id}"
+              class="open-modal-btn inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white text-ink hover:bg-sky-50 text-xs font-semibold transition-colors cursor-pointer"
+            >
+              <span>Full Breakdown</span>
+              <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+            </button>
+            <a
+              href="${activeProject.watchUrl}"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-cobalt hover:bg-cobaltDeep text-white text-xs font-semibold transition-colors"
+            >
+              <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              <span>YouTube</span>
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Render right unified cut queue
+      const grid = document.getElementById('projectsGrid');
+      grid.innerHTML = filtered
+        .map((project) => {
+          const isSelected = project.id === activeProject.id;
+          return `
+            <article
+              data-project-id="${project.id}"
+              tabindex="0"
+              role="button"
+              aria-label="Play ${project.title}"
+              aria-current="${isSelected ? 'true' : 'false'}"
+              class="project-card group rounded-2xl p-2.5 sm:p-3 flex items-center gap-3 border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-400 ${
+                isSelected
+                  ? 'bg-white/[0.14] border-sky-400/60 shadow-lg'
+                  : 'bg-white/[0.04] border-white/[0.07] hover:bg-white/[0.09] hover:border-white/15'
+              }"
+            >
+              <div class="relative w-20 h-14 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/10">
+                <img src="${project.image}" alt="${project.title}" loading="lazy" class="w-full h-full object-cover" />
+                ${
+                  isSelected
+                    ? '<span class="absolute inset-0 bg-cobalt/35 flex items-center justify-center"><span class="px-1.5 py-0.5 rounded bg-slate-950/85 text-[9px] font-mono font-semibold text-sky-300 tracking-wider">PLAYING</span></span>'
+                    : ''
+                }
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-1.5 text-[11px] font-mono">
+                  <span class="${isSelected ? 'text-sky-300 font-semibold' : 'text-slate-400'}">${project.clipLabel}</span>
+                  <span class="text-slate-600">&bull;</span>
+                  <span class="text-slate-400 truncate">${project.category}</span>
+                </div>
+                <h4 class="mt-0.5 text-sm font-semibold text-white truncate">${project.title}</h4>
+              </div>
+              <span class="w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                isSelected ? 'bg-cobalt text-white' : 'bg-white/5 text-slate-400 group-hover:text-white'
+              }">
+                <i data-lucide="${isSelected ? 'play' : 'chevron-right'}" class="w-3.5 h-3.5 ${isSelected ? 'fill-white' : ''}"></i>
+              </span>
+            </article>
+          `;
+        })
+        .join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderCapabilities() {
+      const isFreelance = state.hireMode === 'freelance';
+      const freelanceBtn = document.getElementById('toggleFreelanceBtn');
+      const roleBtn = document.getElementById('toggleRoleBtn');
+
+      freelanceBtn.className = `px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+        isFreelance ? 'bg-cobalt text-white shadow-sm' : 'text-slate-600 hover:text-ink'
+      }`;
+      roleBtn.className = `px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+        !isFreelance ? 'bg-ink text-white shadow-sm' : 'text-slate-600 hover:text-ink'
+      }`;
+
+      const data = CAPABILITIES[state.hireMode];
+      document.getElementById('capabilitiesSubtitle').textContent = data.subtitle;
+
+      const grid = document.getElementById('capabilitiesGrid');
+      grid.innerHTML = data.items
+        .map(
+          (item) => `
+          <div class="bento-card bento-card-interactive rounded-2xl p-6 flex flex-col justify-between">
+            <div>
+              <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-cobalt">
+                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+              </div>
+              <h3 class="mt-4 text-base font-bold text-ink">${item.title}</h3>
+              <p class="mt-2 text-sm text-slate-600 leading-relaxed">${item.desc}</p>
+            </div>
+          </div>
+        `
+        )
+        .join('');
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderToolkit() {
+      const list = document.getElementById('toolkitList');
+      list.innerHTML = TOOLKIT.map((tool, idx) => {
+        const active = idx === state.activeToolIdx;
+        return `
+          <button
+            type="button"
+            data-tool-idx="${idx}"
+            class="tool-btn flex items-center gap-3 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+              active
+                ? 'bg-blue-50/90 border-blue-300 shadow-sm'
+                : 'bg-stoneBg/70 border-slate-200/80 hover:bg-white hover:border-slate-300'
+            }"
+          >
+            <span class="w-9 h-9 rounded-xl ${tool.accent} font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+              ${tool.code}
+            </span>
+            <div class="min-w-0">
+              <span class="block text-xs sm:text-sm font-bold text-ink truncate">${tool.name}</span>
+              <span class="block text-[11px] text-slate-500 truncate">${tool.badge}</span>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      const selected = TOOLKIT[state.activeToolIdx];
+      document.getElementById('toolkitDetail').innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <span class="w-7 h-7 rounded-lg ${selected.accent} font-bold text-[11px] flex items-center justify-center">${selected.code}</span>
+            <span class="text-sm font-bold text-ink">${selected.name}</span>
+          </div>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-cobalt bg-blue-50 px-2.5 py-0.5 rounded-full">${selected.badge}</span>
+        </div>
+        <p class="mt-2.5 text-sm text-slate-600 leading-relaxed">${selected.role}</p>
+      `;
+    }
+
+    function renderContactFormMode() {
+      const isFreelance = state.hireMode === 'freelance';
+      const fBtn = document.getElementById('formModeFreelance');
+      const rBtn = document.getElementById('formModeRole');
+
+      fBtn.className = `px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all cursor-pointer ${
+        isFreelance
+          ? 'bg-blue-50 border-cobalt text-cobalt'
+          : 'bg-stoneBg border-slate-200 text-slate-600 hover:text-ink'
+      }`;
+      rBtn.className = `px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all cursor-pointer ${
+        !isFreelance
+          ? 'bg-slate-900 border-slate-900 text-white'
+          : 'bg-stoneBg border-slate-200 text-slate-600 hover:text-ink'
+      }`;
+
+      document.getElementById('formatLabel').textContent = isFreelance ? 'Project Focus' : 'Role Type';
+      const options = FORM_OPTIONS[state.hireMode];
+      if (!options.includes(state.selectedFormat)) {
+        state.selectedFormat = options[0];
+      }
+
+      document.getElementById('formatOptions').innerHTML = options
+        .map((opt) => {
+          const active = state.selectedFormat === opt;
+          return `
+            <button
+              type="button"
+              data-format="${opt}"
+              class="format-pill px-3.5 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                active
+                  ? 'bg-cobalt text-white border-cobalt shadow-sm'
+                  : 'bg-stoneBg text-slate-600 border-slate-200 hover:border-slate-300 hover:text-ink'
+              }"
+            >
+              ${opt}
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function setHireMode(mode) {
+      state.hireMode = mode;
+      renderCapabilities();
+      renderContactFormMode();
+    }
+
+    function openProjectModal(projectId) {
+      const project = PROJECTS.find((p) => p.id === projectId);
+      if (!project) return;
+      state.selectedProjectId = projectId;
+
+      // Pause stage monitor video so audio never overlaps with modal player
+      const stageIframe = document.getElementById('stageVideoIframe');
+      if (stageIframe) {
+        stageIframe.src = `https://www.youtube.com/embed/${project.videoId}?rel=0&modestbranding=1`;
+      }
+
+      const tagText = `${project.clipLabel} • ${project.timecode}`;
+      const watchUrl = project.watchUrl || `https://www.youtube.com/shorts/${project.videoId}`;
+      const highlights = project.highlights || [
+        'Tight short-form pacing tailored for viewer retention',
+        'Clean cuts and timing crafted in Adobe Creative Cloud',
+        'Synced from the live YouTube portfolio playlist',
+      ];
+
+      document.getElementById('modalClipTag').textContent = tagText;
+      document.getElementById('modalCategory').textContent = project.category;
+      document.getElementById('modalVideoIframe').src = `https://www.youtube.com/embed/${project.videoId}?rel=0&modestbranding=1`;
+      document.getElementById('modalWatchLink').href = watchUrl;
+      document.getElementById('modalTitle').textContent = project.title;
+      document.getElementById('modalDescription').textContent = project.description;
+
+      document.getElementById('modalHighlights').innerHTML = highlights
+        .map(
+          (h) =>
+            `<li class="flex items-start gap-2"><span class="w-1.5 h-1.5 rounded-full bg-cobalt mt-2 shrink-0"></span><span>${h}</span></li>`
+        )
+        .join('');
+
+      document.getElementById('modalTools').innerHTML = project.tools
+        .map(
+          (t) =>
+            `<span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-medium text-ink">${t}</span>`
+        )
+        .join('');
+
+      document.getElementById('projectModal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeProjectModal() {
+      state.selectedProjectId = null;
+      document.getElementById('modalVideoIframe').src = '';
+      document.getElementById('projectModal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function navigateModal(delta) {
+      if (!state.selectedProjectId) return;
+      const list = getFilteredProjects();
+      const idx = list.findIndex((p) => p.id === state.selectedProjectId);
+      const baseList = idx === -1 ? PROJECTS : list;
+      const baseIdx = idx === -1 ? PROJECTS.findIndex((p) => p.id === state.selectedProjectId) : idx;
+      const nextIdx = (baseIdx + delta + baseList.length) % baseList.length;
+      state.activeStageId = baseList[nextIdx].id;
+      state.autoplayStage = false;
+      renderScreeningRoom();
+      openProjectModal(baseList[nextIdx].id);
+    }
+
+    function buildFormattedBrief() {
+      const name = document.getElementById('senderName').value.trim() || 'Prospective Client';
+      const email = document.getElementById('senderEmail').value.trim() || 'Not provided';
+      const brief = document.getElementById('senderBrief').value.trim() || 'Looking to discuss an editing opportunity.';
+      const modeLabel = state.hireMode === 'freelance' ? 'Freelance Project Inquiry' : 'Video Editor Role Inquiry';
+      const subject = `[${modeLabel}] ${state.selectedFormat} — ${name}`;
+      const body = [
+        `Hi Yash,`,
+        ``,
+        `Inquiry Type: ${modeLabel}`,
+        `Focus / Format: ${state.selectedFormat}`,
+        `From: ${name} (${email})`,
+        ``,
+        `Details:`,
+        brief,
+      ].join('\n');
+      return { subject, body };
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFilters();
+      renderScreeningRoom();
+      renderCapabilities();
+      renderToolkit();
+      renderContactFormMode();
+      if (window.lucide) lucide.createIcons();
+
+      // Mobile menu
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
+      mobileMenuBtn.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.toggle('hidden');
+        mobileMenuBtn.setAttribute('aria-expanded', String(!isHidden));
+      });
+      mobileMenu.addEventListener('click', (e) => {
+        if (e.target.closest('a')) {
+          mobileMenu.classList.add('hidden');
+          mobileMenuBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Nav & Hero CTAs
+      document.getElementById('navHireBtn').addEventListener('click', () => {
+        setHireMode('freelance');
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+      document.getElementById('heroFreelanceBtn').addEventListener('click', () => {
+        setHireMode('freelance');
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+      document.getElementById('heroRoleBtn').addEventListener('click', () => {
+        setHireMode('role');
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // Category filter delegation
+      document.getElementById('workFilters').addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (!btn) return;
+        state.activeCategory = btn.dataset.category;
+        state.autoplayStage = false;
+        renderFilters();
+        renderScreeningRoom();
+      });
+
+      // Active stage controls delegation (Prev/Next clip + Full Breakdown modal)
+      document.getElementById('activeStage').addEventListener('click', (e) => {
+        const navBtn = e.target.closest('.stage-nav-btn');
+        if (navBtn) {
+          const delta = Number(navBtn.dataset.stageNav);
+          const filtered = getFilteredProjects();
+          const idx = filtered.findIndex((p) => p.id === state.activeStageId);
+          const nextIdx = (idx + delta + filtered.length) % filtered.length;
+          state.activeStageId = filtered[nextIdx].id;
+          state.autoplayStage = true;
+          renderScreeningRoom();
+          return;
+        }
+        const btn = e.target.closest('.open-modal-btn');
+        if (btn) openProjectModal(btn.dataset.openModal);
+      });
+
+      // Queue item selection (clicking any clip immediately loads & plays it in the monitor)
+      const projectsGrid = document.getElementById('projectsGrid');
+      const selectQueueClip = (id) => {
+        state.activeStageId = id;
+        state.autoplayStage = true;
+        renderScreeningRoom();
+      };
+      projectsGrid.addEventListener('click', (e) => {
+        const card = e.target.closest('.project-card');
+        if (!card) return;
+        selectQueueClip(card.dataset.projectId);
+      });
+      projectsGrid.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const card = e.target.closest('.project-card');
+          if (!card) return;
+          e.preventDefault();
+          selectQueueClip(card.dataset.projectId);
+        }
+      });
+
+      // Modal controls
+      document.getElementById('closeModalBtn').addEventListener('click', closeProjectModal);
+      document.getElementById('projectModal').addEventListener('click', (e) => {
+        if (e.target.id === 'projectModal') closeProjectModal();
+      });
+      document.getElementById('prevProjectBtn').addEventListener('click', () => navigateModal(-1));
+      document.getElementById('nextProjectBtn').addEventListener('click', () => navigateModal(1));
+      document.getElementById('requestSimilarBtn').addEventListener('click', () => {
+        const project = PROJECTS.find((p) => p.id === state.selectedProjectId);
+        closeProjectModal();
+        setHireMode('freelance');
+        if (project) {
+          state.selectedFormat = project.formatTag;
+          renderContactFormMode();
+          const briefEl = document.getElementById('senderBrief');
+          if (!briefEl.value.trim()) {
+            const styleLabel = (project.category || 'video').toLowerCase();
+            briefEl.value = `Hi Yash, I watched "${project.title}" in your portfolio and would love to discuss a similar ${styleLabel} edit.`;
+          }
+        }
+        document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (!state.selectedProjectId) return;
+        if (e.key === 'Escape') closeProjectModal();
+        if (e.key === 'ArrowLeft') navigateModal(-1);
+        if (e.key === 'ArrowRight') navigateModal(1);
+      });
+
+      // Capabilities toggle
+      document.getElementById('toggleFreelanceBtn').addEventListener('click', () => setHireMode('freelance'));
+      document.getElementById('toggleRoleBtn').addEventListener('click', () => setHireMode('role'));
+
+      // Toolkit dock delegation
+      document.getElementById('toolkitList').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tool-btn');
+        if (!btn) return;
+        state.activeToolIdx = Number(btn.dataset.toolIdx);
+        renderToolkit();
+      });
+
+      // Contact form mode & format pills
+      document.getElementById('formModeFreelance').addEventListener('click', () => setHireMode('freelance'));
+      document.getElementById('formModeRole').addEventListener('click', () => setHireMode('role'));
+      document.getElementById('formatOptions').addEventListener('click', (e) => {
+        const pill = e.target.closest('.format-pill');
+        if (!pill) return;
+        state.selectedFormat = pill.dataset.format;
+        renderContactFormMode();
+      });
+
+      // Copy direct email
+      document.getElementById('copyEmailBtn').addEventListener('click', () => {
+        copyText(EMAIL_ADDRESS, `Copied ${EMAIL_ADDRESS}`);
+      });
+
+      // Copy brief
+      document.getElementById('copyBriefBtn').addEventListener('click', () => {
+        const { subject, body } = buildFormattedBrief();
+        copyText(`To: ${EMAIL_ADDRESS}\nSubject: ${subject}\n\n${body}`, 'Formatted brief copied to clipboard');
+      });
+
+      // Submit mailto
+      document.getElementById('inquiryForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const { subject, body } = buildFormattedBrief();
+        const mailto = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.location.href = mailto;
+        showToast('Opening your email app with your pre-filled brief');
+      });
     });
-  }, { threshold: 0.15 });
-
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-</script>
-
+  </script>
 </body>
 </html>
